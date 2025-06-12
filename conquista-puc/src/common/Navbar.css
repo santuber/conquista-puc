@@ -1,0 +1,73 @@
+.navbar {
+  background-color: #003366;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  min-height: 60px;  /* Establecer altura mínima para el navbar */
+}
+
+.nav-left,
+.nav-right {
+  display: flex;
+  list-style: none;
+  gap: 1.5rem;
+  margin: 0;
+  padding: 0;
+  align-items: center;  /* Alinea verticalmente todos los elementos */
+}
+
+.nav-left a,
+.nav-right a,
+.nav-right button, /* Para el botón logout */
+.nav-left li,
+.nav-right li {
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.nav-left a:hover,
+.nav-right a:hover,
+.nav-right button:hover {
+  color: #ffcc00;
+}
+
+.nav-right button {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-weight: 5750;
+  font-size: 0.95rem;
+  padding: 0;
+  margin: 0;
+}
+
+.nav-right button:hover {
+  color: #ffcc00;
+}
+
+.nav-left a {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.nav-left a:hover {
+  color: #ffcc00;
+}
+
+/* Asegurar que el espacio entre los elementos sea consistente y alineado */
+.nav-right {
+  display: flex;  /* Flexbox para los elementos a la derecha */
+  align-items: center;  /* Alinea los elementos verticalmente */
+  justify-content: flex-end;  /* Asegura que todo esté alineado a la derecha */
+}
+
+.nav-right li {
+  display: flex;
+  align-items: center;  /* Alineación vertical */
+}
