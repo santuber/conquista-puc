@@ -6,6 +6,10 @@ import Navbar from './Navbar';
 import Login from '../views/Login';
 import Signup from '../views/Signup';
 import Game from '../game/Game';
+import ProtectedRoute from '../protected/ProtectedRoute';
+import AdminRoute from '../protected/AdminRoute';
+import Unauthorized from '../protected/Unauthorized';
+import AdminPanel from '../views/AdminPanel';
 
 function Routing() {
   return (
@@ -17,7 +21,17 @@ function Routing() {
         <Route path="/instrucciones" element={<Instrucciones />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/partida" element={<Game />} />
+        <Route path="/partida" element={
+          <ProtectedRoute>
+            <Game />
+          </ProtectedRoute>
+        } />
+        <Route path="/adminpanel" element={
+          <AdminRoute>
+            <AdminPanel />
+          </AdminRoute>
+        } />
+        <Route path="/unauthorized" element={<Unauthorized />} />
       </Routes>
     </BrowserRouter>
   );

@@ -1,5 +1,6 @@
 import { useState, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate , useLocation } from 'react-router-dom';
+import './Login.css';
 import axios from 'axios';
 import { AuthContext } from '../auth/AuthContext';
 
@@ -10,6 +11,8 @@ function Login() {
   const [msg, setMsg] = useState('');
   const { setToken } = useContext(AuthContext);
   const navigate = useNavigate();
+  const location = useLocation();
+  const redirectMsg = location.state?.msg || '';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,17 +23,16 @@ function Login() {
         password,
       });
 
-      // Verifica si la respuesta tiene un token válido
-      console.log("Respuesta del backend:", res.data); // Log para ver la respuesta completa
+      console.log("Respuesta del backend:", res.data);
 
       if (res.data && res.data.access_token) {
         const token = res.data.access_token;
-        setToken(token); // Actualiza el contexto con el token
-        localStorage.setItem('token', token); // Guarda el token en localStorage
-        localStorage.setItem('user', JSON.stringify(res.data.user));  // Guardamos el usuario como un objeto
+        setToken(token);
+        localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify(res.data.user));
         setMsg('Login exitoso!');
         setError(false);
-        navigate('/'); // Redirige a la página de inicio
+        navigate('/');
       } else {
         setMsg('Login fallido, por favor revisa tus credenciales.');
         setError(true);
@@ -44,6 +46,7 @@ function Login() {
 
   return (
     <div className="Login">
+      {redirectMsg && <div className="noticeMsg">{redirectMsg}</div>}
       {msg && <div className={error ? 'error' : 'successMsg'}>{msg}</div>}
       <form onSubmit={handleSubmit}>
         <h1>Iniciar Sesión</h1>
