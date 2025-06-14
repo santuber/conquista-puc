@@ -7,17 +7,15 @@ const LogoutButton = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    logout();  // Elimina el token del contexto
-    localStorage.removeItem('token');  // Elimina el token de localStorage
-    navigate('/login');  // Redirige a la página de login
+    logout();
+    localStorage.removeItem('token');
+    navigate('/login');
   };
 
   return (
-    <li className="nav-item">
-      <button className="logout-button" onClick={handleLogout}>
-        Cerrar sesión
-      </button>
-    </li>
+    <button className="logout-button" onClick={handleLogout}>
+      Cerrar sesión
+    </button>
   );
 };
 

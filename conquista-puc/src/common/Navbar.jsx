@@ -4,10 +4,29 @@ import './Navbar.css';
 import { AuthContext } from '../auth/AuthContext';
 import { useContext } from 'react';
 import LogoutButton from '../views/Logout';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 
 function Navbar() {
   const { token } = useContext(AuthContext);
+  const [isAdmin, setIsAdmin] = useState(false);
   const user = token ? JSON.parse(localStorage.getItem('user')) : null;
+
+  useEffect(() => {
+      if (!token) {
+        setIsAdmin(false);
+        return;
+      }
+      axios.get(`${import.meta.env.VITE_BACKEND_URL}/usuarios/me`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      .then(res => {
+        console.log("Respuesta de /usuarios/me:", res.data);
+        setIsAdmin(res.data.user?.rol === 'admin');
+      })
+      .catch(() => setIsAdmin(false));
+    }, [token]);
+
   return (
     <nav className="navbar">
       <ul className="nav-left">
@@ -15,6 +34,7 @@ function Navbar() {
         <li><Link to="/instrucciones">Instrucciones</Link></li>
         <li><Link to="/nosotros">Nosotros</Link></li>
         <li><Link to="/partida">Partida</Link></li>
+        {isAdmin && <li><Link to="/adminpanel">Admin</Link></li>}
       </ul>
       <ul className="nav-right">
         {token ? (

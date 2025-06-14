@@ -19,16 +19,14 @@ function Signup() {
         rol,
       });
 
-      // Asegúrate de que el backend esté enviando un mensaje claro
       if (res.data && res.data.message) {
-        setMsg(res.data.message);  // Mostrar mensaje de éxito del backend
+        setMsg(res.data.message);
         setError(false);
       } else {
         setMsg('Registro exitoso! Ahora puedes volver y loguearte');
         setError(false);
       }
     } catch (err) {
-      // Mejor manejo de error: muestra el mensaje del backend si existe
       const errorMsg = err.response?.data?.message || 'Error al registrarse. Intenta nuevamente.';
       setError(true);
       setMsg(errorMsg);
