@@ -51,10 +51,20 @@ function CrearPartida() {
       const resultado = await partidasService.crearPartida(partidaData);
 
       if (resultado.success) {
-        setSuccess('Partida creada exitosamente');
-        setTimeout(() => {
-          navigate(`/partida/${resultado.data.id}`);
-        }, 1500);
+        // Ahora unir automáticamente al creador a la partida
+        const resultadoUnirse = await partidasService.unirseAPartida(resultado.data.id, user.id);
+        
+        if (resultadoUnirse.success) {
+          setSuccess('Partida creada exitosamente y te has unido automáticamente');
+          setTimeout(() => {
+            navigate(`/partida/${resultado.data.id}`);
+          }, 1500);
+        } else {
+          setSuccess('Partida creada, pero hubo un problema al unirte automáticamente');
+          setTimeout(() => {
+            navigate(`/partida/${resultado.data.id}`);
+          }, 1500);
+        }
       } else {
         setError(resultado.error || 'Error desconocido al crear la partida');
       }
