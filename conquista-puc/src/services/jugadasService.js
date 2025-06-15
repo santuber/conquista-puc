@@ -2,7 +2,6 @@ import axios from 'axios';
 
 const API_BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
-// Configurar interceptor para incluir el token automáticamente
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
 });
@@ -25,7 +24,6 @@ apiClient.interceptors.response.use(
 );
 
 export const jugadasService = {
-  // Iniciar una partida
   async iniciarPartida(id_jugadores, id_creador) {
     try {
       const response = await apiClient.post('/jugadas/start-game', {
@@ -47,7 +45,6 @@ export const jugadasService = {
     }
   },
 
-  // Aplicar refuerzos
   async aplicarRefuerzos(id_juego, id_jugador, refuerzos, lanzar_dado = false) {
     try {
       const response = await apiClient.post('/jugadas/reinforce', {
@@ -71,7 +68,6 @@ export const jugadasService = {
     }
   },
 
-  // Realizar ataque
   async realizarAtaque(id_juego, id_jugador, facultad_origen_id, facultad_objetivo) {
     try {
       const response = await apiClient.post('/jugadas/attack', {
@@ -95,7 +91,6 @@ export const jugadasService = {
     }
   },
 
-  // Mover tropas
   async moverTropas(id_juego, id_jugador, facultad_origen_id, facultad_destino_id, cantidad) {
     try {
       const response = await apiClient.post('/jugadas/move', {
@@ -120,7 +115,6 @@ export const jugadasService = {
     }
   },
 
-  // Finalizar turno
   async finalizarTurno(id_juego, id_jugador) {
     try {
       const response = await apiClient.post('/jugadas/end-turn', {
@@ -142,7 +136,6 @@ export const jugadasService = {
     }
   },
 
-  // Ejecutar jugada genérica (usando el endpoint principal)
   async ejecutarJugada(accion, datos) {
     try {
       const response = await apiClient.post('/jugadas', {
