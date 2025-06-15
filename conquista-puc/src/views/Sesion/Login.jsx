@@ -1,8 +1,8 @@
-import { useState } from 'react';
-import { useNavigate , useLocation } from 'react-router-dom';
-import './Login.css';
+import React, { useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
-import { useAuth } from '../auth/AuthContext';
+import './Login.css';
+import { useAuth } from '../../auth/AuthContext';
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -19,7 +19,7 @@ function Login() {
 
     const loginData = { 
       email, 
-      contrasena: password
+      contrasena: password // Cambiar a 'contrasena' si el backend lo espera así
     };
 
     try {
@@ -48,7 +48,7 @@ function Login() {
         const errorData = error.response.data;
         
         if (status === 401) {
-          errorMessage = errorData?.error || 'Credenciales incorrectas. Verifica tu email y contrasena.';
+          errorMessage = errorData?.error || 'Credenciales incorrectas. Verifica tu email y contraseña.';
         } else if (status === 400) {
           errorMessage = errorData?.error || 'Datos de entrada invalidos.';
         } else if (status === 404) {
@@ -66,6 +66,8 @@ function Login() {
         errorMessage = `Error de configuracion: ${error.message}`;
       }
       
+      console.log('Error completo:', error);
+      console.log('Datos enviados:', loginData);
       setMsg(errorMessage);
       setError(true);
     }
@@ -73,20 +75,50 @@ function Login() {
 
   return (
     <div className="Login">
-      {redirectMsg && <div className="noticeMsg">{redirectMsg}</div>}
-      {msg && <div className={error ? 'error' : 'successMsg'}>{msg}</div>}
-      <form onSubmit={handleSubmit}>
-        <h1>Iniciar Sesión</h1>
-        <label>
-          Correo:
-          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-        </label>
-        <label>
-          Contraseña:
-          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-        </label>
-        <button type="submit">Ingresar</button>
-      </form>
+      <div className="login-pergamino">
+        <h1 className="login-titulo">Iniciar Sesión</h1>
+        
+        {redirectMsg && <div className="noticeMsg">{redirectMsg}</div>}
+        {msg && <div className={error ? 'noticeMsg error-msg' : 'noticeMsg success-msg'}>{msg}</div>}
+        
+        <form onSubmit={handleSubmit} className="login-form">
+          <div className="form-group">
+            <label htmlFor="login-email" className="form-label">
+              Correo:
+            </label>
+            <input
+              id="login-email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="form-input"
+              placeholder="Ingresa tu correo electrónico"
+            />
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="login-password" className="form-label">
+              Contraseña:
+            </label>
+            <input
+              id="login-password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="form-input"
+              placeholder="Ingresa tu contraseña"
+            />
+          </div>
+          
+          <button type="submit" className="login-button">Ingresar</button>
+        </form>
+        
+        <div className="auth-links">
+          <p>¿No tienes cuenta? <a href="/signup" className="auth-link">Regístrate aquí</a></p>
+        </div>
+      </div>
     </div>
   );
 }

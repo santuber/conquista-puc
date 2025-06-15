@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import './Navbar.css';
 import { useAuth } from '../auth/AuthContext';
-import LogoutButton from '../views/Logout';
+import LogoutButton from '../views/Sesion/Logout';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
