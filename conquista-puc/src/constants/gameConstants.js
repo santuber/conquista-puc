@@ -1,5 +1,3 @@
-// Constantes para mantener consistencia con el backend
-
 export const ESTADOS_PARTIDA = {
   EN_ESPERA: 'en_espera',
   EN_JUEGO: 'en_juego',

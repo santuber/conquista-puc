@@ -8,6 +8,7 @@ import Signup from '../views/Signup';
 import Game from '../game/Game';
 import CrearPartida from '../views/CrearPartida';
 import UnirsePartida from '../views/UnirsePartida';
+import LobbyPartida from '../views/LobbyPartida';
 import ProtectedRoute from '../protected/ProtectedRoute';
 import SimpleProtectedRoute from '../protected/SimpleProtectedRoute';
 import AdminRoute from '../protected/AdminRoute';
@@ -40,6 +41,11 @@ function Routing() {
           </SimpleProtectedRoute>
         } />
         <Route path="/partida/:id" element={
+          <SimpleProtectedRoute>
+            <LobbyPartida />
+          </SimpleProtectedRoute>
+        } />
+        <Route path="/juego/:id" element={
           <SimpleProtectedRoute>
             <Game />
           </SimpleProtectedRoute>
