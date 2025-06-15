@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../auth/AuthContext';
-import { partidasService } from '../services/partidasService';
+import { useAuth } from '../../auth/AuthContext';
+import { partidasService } from '../../services/partidasService';
 
 function UnirsePartida() {
   const [codigoSala, setCodigoSala] = useState('');

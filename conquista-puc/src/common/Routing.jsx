@@ -1,10 +1,10 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Landing from '../views/Landing';
-import Nosotros from '../views/Nosotros';
-import Instrucciones from '../views/Instrucciones';
+import Nosotros from '../views/Nosotros/Nosotros';
+import Instrucciones from '../views/Instrucciones/Instrucciones';
 import Navbar from './Navbar';
 import Login from '../views/Login';
-import Signup from '../views/Signup';
+import Signup from '../views/Logs/Signup';
 import Game from '../game/Game';
 import CrearPartida from '../views/CrearPartida';
 import UnirsePartida from '../views/UnirsePartida';
