@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useAuth } from '../auth/AuthContext';
-import { partidasService } from '../services/partidasService';
-import { jugadasService } from '../services/jugadasService';
-import { ESTADOS_PARTIDA } from '../constants/gameConstants';
+import { useAuth } from '../../auth/AuthContext';
+import { partidasService } from '../../services/partidasService';
+import { jugadasService } from '../../services/jugadasService';
+import { ESTADOS_PARTIDA } from '../../constants/gameConstants';
 
 function LobbyPartida() {
   const { id } = useParams();
