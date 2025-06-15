@@ -6,7 +6,10 @@ import Navbar from './Navbar';
 import Login from '../views/Login';
 import Signup from '../views/Signup';
 import Game from '../game/Game';
+import CrearPartida from '../views/CrearPartida';
+import UnirsePartida from '../views/UnirsePartida';
 import ProtectedRoute from '../protected/ProtectedRoute';
+import SimpleProtectedRoute from '../protected/SimpleProtectedRoute';
 import AdminRoute from '../protected/AdminRoute';
 import Unauthorized from '../protected/Unauthorized';
 import AdminPanel from '../views/AdminPanel';
@@ -21,10 +24,25 @@ function Routing() {
         <Route path="/instrucciones" element={<Instrucciones />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/crear-partida" element={
+          <SimpleProtectedRoute>
+            <CrearPartida />
+          </SimpleProtectedRoute>
+        } />
+        <Route path="/unirse-partida" element={
+          <SimpleProtectedRoute>
+            <UnirsePartida />
+          </SimpleProtectedRoute>
+        } />
         <Route path="/partida" element={
-          <ProtectedRoute>
+          <SimpleProtectedRoute>
             <Game />
-          </ProtectedRoute>
+          </SimpleProtectedRoute>
+        } />
+        <Route path="/partida/:id" element={
+          <SimpleProtectedRoute>
+            <Game />
+          </SimpleProtectedRoute>
         } />
         <Route path="/adminpanel" element={
           <AdminRoute>
