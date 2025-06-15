@@ -1,14 +1,12 @@
-// src/common/Navbar.jsx
 import { Link } from 'react-router-dom';
 import './Navbar.css';
-import { AuthContext } from '../auth/AuthContext';
-import { useContext } from 'react';
+import { useAuth } from '../auth/AuthContext';
 import LogoutButton from '../views/Logout';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
 function Navbar() {
-  const { token } = useContext(AuthContext);
+  const { token } = useAuth();
   const [isAdmin, setIsAdmin] = useState(false);
   const user = token ? JSON.parse(localStorage.getItem('user')) : null;
 
