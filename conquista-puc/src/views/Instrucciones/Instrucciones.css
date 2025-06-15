@@ -1,0 +1,110 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Uncial+Antiqua&family=MedievalSharp&display=swap');
+
+.instrucciones {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-image: url('/images/background_landing.jpg');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+  padding: 2rem;
+}
+
+.pergamino {
+  background: linear-gradient(135deg, #0d2456 0%, #0c1b4d 50%, #16295c 100%);
+  border-radius: 30px;
+  font-family: 'Cinzel', 'MedievalSharp', 'Times New Roman', serif;
+  padding: 3rem 4rem;
+  max-width: 900px;
+  width: 90%;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  border: 3px solid #fbbf24;
+  position: relative;
+}
+
+.pergamino::before {
+  content: '';
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  font-family: 'Cinzel', 'MedievalSharp', 'Times New Roman', serif;
+  right: -5px;
+  bottom: -5px;
+  background: linear-gradient(45deg, #fbbf24, #f59e0b, #d97706);
+  border-radius: 35px;
+  z-index: -1;
+}
+
+.titulo {
+  color: #fbbf24;
+  font-size: 2.5rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 2rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  border: 3px solid #fbbf24;
+  padding: 1rem 2rem;
+  background: rgba(15, 32, 80, 0.8);
+  border-radius: 10px;
+  letter-spacing: 0.2em;
+  font-family: 'Cinzel', 'MedievalSharp', 'Times New Roman', serif;
+}
+
+.objetivo {
+  color: #fbbf24;
+  font-size: 1.2rem;
+  text-align: center;
+  margin-bottom: 2rem;
+  font-weight: 500;
+  font-family: 'Cinzel', 'MedievalSharp', 'Times New Roman', serif;
+}
+
+.listaReglas {
+  color: #fbbf24;
+  font-size: 1.1rem;
+  line-height: 1.8;
+  margin: 0;
+  padding-left: 0;
+  font-family: 'Cinzel', 'MedievalSharp', 'Times New Roman', serif;
+  counter-reset: regla-counter;
+}
+
+.listaReglas li {
+  margin-bottom: 1rem;
+  padding-left: 1rem;
+  counter-increment: regla-counter;
+  list-style: none;
+  position: relative;
+}
+
+.listaReglas li::before {
+  content: counter(regla-counter) ".";
+  position: absolute;
+  left: -1.5rem;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.botonRegresar {
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  color: #1e3a8a;
+  border: none;
+  padding: 1rem 2rem;
+  font-family: 'Cinzel', 'MedievalSharp', 'Times New Roman', serif;
+  font-size: 1.1rem;
+  font-weight: bold;
+  border-radius: 25px;
+  cursor: pointer;
+  margin-top: 2rem;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.botonRegresar:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+}

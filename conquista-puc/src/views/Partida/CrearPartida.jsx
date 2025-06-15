@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../auth/AuthContext';
-import { partidasService } from '../services/partidasService';
-import { ESTADOS_PARTIDA } from '../constants/gameConstants';
+import { useAuth } from '../../auth/AuthContext';
+import { partidasService } from '../../services/partidasService';
+import { ESTADOS_PARTIDA } from '../../constants/gameConstants';
 
 function CrearPartida() {
   const [codigoSala, setCodigoSala] = useState('');
