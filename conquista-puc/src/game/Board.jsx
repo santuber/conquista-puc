@@ -1,7 +1,9 @@
+import './Board.css';
+
 function Board() {
   return (
-    <div style={{ padding: '1rem', background: '#eee', borderRadius: '8px' }}>
-      <p>Mapa del juego (placeholder)</p>
+    <div className="board-container">
+      <p className="board-placeholder">Mapa del juego (placeholder)</p>
     </div>
   );
 }

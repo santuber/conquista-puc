@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../auth/AuthContext';
 import { partidasService } from '../../services/partidasService';
+import './Unirse.css';
 
 function UnirsePartida() {
   const [codigoSala, setCodigoSala] = useState('');
@@ -96,186 +97,113 @@ function UnirsePartida() {
   };
 
   return (
-    <div className="unirse-partida" style={{ 
-      maxWidth: '600px', 
-      margin: '2rem auto', 
-      padding: '2rem',
-      backgroundColor: '#f8f9fa',
-      borderRadius: '8px',
-      boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
-    }}>
-      <h2 style={{ textAlign: 'center', marginBottom: '2rem', color: '#333' }}>
-        Unirse a Partida
-      </h2>
+    <div className="partida-container">
+      <div className="unirse-partida">
+        <h2>Unirse a Partida</h2>
 
-      {/* Buscar partida */}
-      <div style={{ marginBottom: '2rem' }}>
-        <h3 style={{ marginBottom: '1rem', color: '#555' }}>Buscar Partida</h3>
-        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-          <input
-            type="text"
-            placeholder="Codigo de partida (ej: ABC123)"
-            value={codigoSala}
-            onChange={(e) => setCodigoSala(e.target.value.toUpperCase())}
-            style={{
-              flex: 1,
-              padding: '12px',
-              border: '2px solid #ddd',
-              borderRadius: '6px',
-              fontSize: '16px',
-              textAlign: 'center',
-              letterSpacing: '2px',
-              fontWeight: 'bold'
-            }}
-            maxLength={6}
-          />
-          <button 
-            onClick={buscarPartida}
-            disabled={loading || !codigoSala.trim()}
-            style={{
-              padding: '12px 24px',
-              backgroundColor: loading ? '#ccc' : '#007bff',
-              color: 'white',
-              border: 'none',
-              borderRadius: '6px',
-              fontSize: '16px',
-              cursor: loading ? 'not-allowed' : 'pointer',
-              fontWeight: 'bold'
-            }}
-          >
-            {loading ? 'Buscando...' : 'Buscar'}
-          </button>
-          <button 
-            onClick={resetearBusqueda}
-            style={{
-              padding: '12px 16px',
-              backgroundColor: '#6c757d',
-              color: 'white',
-              border: 'none',
-              borderRadius: '6px',
-              fontSize: '16px',
-              cursor: 'pointer'
-            }}
-          >
-            Reset
-          </button>
-        </div>
-      </div>
-
-      {/* Informacion de la partida encontrada */}
-      {partidaEncontrada && (
-        <div style={{ 
-          marginBottom: '2rem',
-          padding: '1.5rem',
-          backgroundColor: '#e8f5e8',
-          borderRadius: '6px',
-          border: '2px solid #d4edda'
-        }}>
-          <h3 style={{ marginBottom: '1rem', color: '#155724' }}>
-            Partida Encontrada
-          </h3>
-          
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '1rem' }}>
-            <div><strong>Codigo:</strong> {partidaEncontrada.codigo_sala}</div>
-            <div><strong>Estado:</strong> {partidaEncontrada.estado}</div>
-            <div><strong>Creador:</strong> {partidaEncontrada.creador}</div>
-            <div><strong>Jugadores:</strong> {partidaEncontrada.jugadores_actuales}/{partidaEncontrada.jugadores_maximo}</div>
+        {/* Buscar partida */}
+        <div className="form-group">
+          <h3>Buscar Partida</h3>
+          <div className="input-group">
+            <input
+              type="text"
+              placeholder="Codigo de partida (ej: ABC123)"
+              value={codigoSala}
+              onChange={(e) => setCodigoSala(e.target.value.toUpperCase())}
+              className="codigo-input"
+              maxLength={6}
+            />
+            <button 
+              onClick={buscarPartida}
+              disabled={loading || !codigoSala.trim()}
+              className="unirse-button"
+            >
+              {loading ? 'Buscando...' : 'Buscar'}
+            </button>
+            <button 
+              onClick={resetearBusqueda}
+              className="unirse-button"
+            >
+              Reset
+            </button>
           </div>
+        </div>
 
-          {/* Lista de jugadores actuales */}
-          {partidaEncontrada.participantes && partidaEncontrada.participantes.length > 0 && (
-            <div style={{ marginTop: '1rem' }}>
-              <strong>Jugadores actuales:</strong>
-              <ul style={{ marginTop: '0.5rem', paddingLeft: '20px' }}>
-                {partidaEncontrada.participantes.map((participante, index) => (
-                  <li key={index} style={{ marginBottom: '4px' }}>
-                    {participante.nombre_usuario} {participante.usuario_id === user?.id && '(TU)'}
-                  </li>
-                ))}
-              </ul>
+        {/* Informacion de la partida encontrada */}
+        {partidaEncontrada && (
+          <div className="partida-encontrada">
+            <h3>Partida Encontrada</h3>
+            
+            <div className="partida-info">
+              <div><strong>Codigo:</strong> {partidaEncontrada.codigo_sala}</div>
+              <div><strong>Estado:</strong> {partidaEncontrada.estado}</div>
+              <div><strong>Creador:</strong> {partidaEncontrada.creador}</div>
+              <div><strong>Jugadores:</strong> {partidaEncontrada.jugadores_actuales}/{partidaEncontrada.jugadores_maximo}</div>
             </div>
-          )}
 
-          {/* Boton para unirse */}
-          <div style={{ marginTop: '1.5rem', textAlign: 'center' }}>
-            {partidaEncontrada.estado === 'en_espera' && 
-             partidaEncontrada.jugadores_actuales < partidaEncontrada.jugadores_maximo &&
-             !partidaEncontrada.participantes.some(p => p.usuario_id === user?.id) ? (
-              <button 
-                onClick={unirseAPartida}
-                disabled={loading}
-                style={{
-                  padding: '12px 32px',
-                  backgroundColor: loading ? '#ccc' : '#28a745',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '6px',
-                  fontSize: '18px',
-                  fontWeight: 'bold',
-                  cursor: loading ? 'not-allowed' : 'pointer'
-                }}
-              >
-                {loading ? 'Uniendo...' : 'Unirse a Partida'}
-              </button>
-            ) : (
-              <div style={{ color: '#721c24', fontWeight: 'bold' }}>
-                {partidaEncontrada.participantes.some(p => p.usuario_id === user?.id) 
-                  ? 'Ya estas en esta partida' 
-                  : partidaEncontrada.estado !== 'en_espera'
-                  ? 'La partida ya ha comenzado'
-                  : 'La partida esta llena'
-                }
+            {/* Lista de jugadores actuales */}
+            {partidaEncontrada.participantes && partidaEncontrada.participantes.length > 0 && (
+              <div className="jugadores-actuales">
+                <strong>Jugadores actuales:</strong>
+                <ul>
+                  {partidaEncontrada.participantes.map((participante, index) => (
+                    <li key={index}>
+                      {participante.nombre_usuario} {participante.usuario_id === user?.id && '(TU)'}
+                    </li>
+                  ))}
+                </ul>
               </div>
             )}
+
+            {/* Boton para unirse */}
+            <div className="unirse-action">
+              {partidaEncontrada.estado === 'en_espera' && 
+               partidaEncontrada.jugadores_actuales < partidaEncontrada.jugadores_maximo &&
+               !partidaEncontrada.participantes.some(p => p.usuario_id === user?.id) ? (
+                <button 
+                  onClick={unirseAPartida}
+                  disabled={loading}
+                  className="unirse-button main-action"
+                >
+                  {loading ? 'Uniendo...' : 'Unirse a Partida'}
+                </button>
+              ) : (
+                <div className="unirse-status">
+                  {partidaEncontrada.participantes.some(p => p.usuario_id === user?.id) 
+                    ? 'Ya estas en esta partida' 
+                    : partidaEncontrada.estado !== 'en_espera'
+                    ? 'La partida ya ha comenzado'
+                    : 'La partida esta llena'
+                  }
+                </div>
+              )}
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Mensajes de error y exito */}
-      {error && (
-        <div style={{ 
-          padding: '12px',
-          backgroundColor: '#f8d7da',
-          color: '#721c24',
-          borderRadius: '6px',
-          marginBottom: '1rem',
-          textAlign: 'center',
-          fontWeight: 'bold'
-        }}>
-          {error}
-        </div>
-      )}
+        {/* Mensajes de error y exito */}
+        {error && (
+          <div className="error-message">
+            {error}
+          </div>
+        )}
 
-      {success && (
-        <div style={{ 
-          padding: '12px',
-          backgroundColor: '#d4edda',
-          color: '#155724',
-          borderRadius: '6px',
-          marginBottom: '1rem',
-          textAlign: 'center',
-          fontWeight: 'bold'
-        }}>
-          {success}
-        </div>
-      )}
+        {success && (
+          <div className="success-message">
+            {success}
+          </div>
+        )}
 
-      {/* Informacion adicional */}
-      <div style={{ 
-        marginTop: '2rem',
-        padding: '1rem',
-        backgroundColor: '#fff3cd',
-        borderRadius: '6px',
-        fontSize: '14px',
-        color: '#856404'
-      }}>
-        <strong>Como funciona:</strong>
-        <ul style={{ marginTop: '8px', paddingLeft: '20px' }}>
-          <li>Ingresa el codigo de 6 caracteres de la partida</li>
-          <li>Verifica la informacion de la partida</li>
-          <li>Unete si hay espacio disponible</li>
-          <li>Espera a que el creador inicie la partida</li>
-        </ul>
+        {/* Informacion adicional */}
+        <div className="info-section">
+          <strong>Como funciona:</strong>
+          <ul>
+            <li>Ingresa el codigo de 6 caracteres de la partida</li>
+            <li>Verifica la informacion de la partida</li>
+            <li>Unete si hay espacio disponible</li>
+            <li>Espera a que el creador inicie la partida</li>
+          </ul>
+        </div>
       </div>
     </div>
   );

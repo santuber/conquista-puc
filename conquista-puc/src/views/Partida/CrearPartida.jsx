@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../auth/AuthContext';
 import { partidasService } from '../../services/partidasService';
 import { ESTADOS_PARTIDA } from '../../constants/gameConstants';
+import './CrearPartida.css';
 
 function CrearPartida() {
   const [codigoSala, setCodigoSala] = useState('');
@@ -76,103 +77,65 @@ function CrearPartida() {
   };
 
   return (
-    <div className="crear-partida" style={{ 
-      maxWidth: '400px', 
-      margin: '2rem auto', 
-      padding: '2rem', 
-      border: '1px solid #ddd', 
-      borderRadius: '8px',
-      backgroundColor: '#f9f9f9'
-    }}>
-      <h2>Crear Nueva Partida</h2>
-      
-      {error && (
-        <div style={{ 
-          color: '#d32f2f', 
-          backgroundColor: '#ffebee', 
-          padding: '0.5rem', 
-          borderRadius: '4px',
-          marginBottom: '1rem'
-        }}>
-          {error}
-        </div>
-      )}
-      
-      {success && (
-        <div style={{ 
-          color: '#2e7d32', 
-          backgroundColor: '#e8f5e8', 
-          padding: '0.5rem', 
-          borderRadius: '4px',
-          marginBottom: '1rem'
-        }}>
-          {success}
-        </div>
-      )}
-
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: '1rem' }}>
-          <label htmlFor="codigoSala" style={{ display: 'block', marginBottom: '0.5rem' }}>
-            Código de Sala:
-          </label>
-          <div style={{ display: 'flex', gap: '0.5rem' }}>
-            <input
-              type="text"
-              id="codigoSala"
-              value={codigoSala}
-              onChange={(e) => setCodigoSala(e.target.value.toUpperCase())}
-              placeholder="Ingresa un código o genera uno"
-              style={{ 
-                flex: 1,
-                padding: '0.5rem', 
-                border: '1px solid #ccc', 
-                borderRadius: '4px' 
-              }}
-              maxLength={10}
-              required
-            />
-            <button
-              type="button"
-              onClick={generarCodigoSala}
-              style={{
-                padding: '0.5rem 1rem',
-                backgroundColor: '#2196F3',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer'
-              }}
-            >
-              Generar
-            </button>
+    <div className="partida-container">
+      <div className="crear-partida">
+        <h2>Crear Nueva Partida</h2>
+        
+        {error && (
+          <div className="error-message">
+            {error}
           </div>
+        )}
+        
+        {success && (
+          <div className="success-message">
+            {success}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="codigoSala" className="form-label">
+              Código de Sala:
+            </label>
+            <div className="input-group">
+              <input
+                type="text"
+                id="codigoSala"
+                value={codigoSala}
+                onChange={(e) => setCodigoSala(e.target.value.toUpperCase())}
+                placeholder="Ingresa un código o genera uno"
+                className="codigo-input"
+                maxLength={10}
+                required
+              />
+              <button
+                type="button"
+                onClick={generarCodigoSala}
+                className="generar-button"
+              >
+                Generar
+              </button>
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="crear-button"
+          >
+            {loading ? 'Creando partida...' : 'Crear Partida'}
+          </button>
+        </form>
+
+        <div className="info-section">
+          <p><strong>Información:</strong></p>
+          <ul>
+            <li>El código de sala debe ser único</li>
+            <li>Otros jugadores podrán unirse usando este código</li>
+            <li>Serás el creador y primer jugador de la partida</li>
+          </ul>
         </div>
-
-        <button
-          type="submit"
-          disabled={loading}
-          style={{
-            width: '100%',
-            padding: '0.75rem',
-            backgroundColor: loading ? '#ccc' : '#4CAF50',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            fontSize: '1rem',
-            cursor: loading ? 'not-allowed' : 'pointer'
-          }}
-        >
-          {loading ? 'Creando partida...' : 'Crear Partida'}
-        </button>
-      </form>
-
-      <div style={{ marginTop: '1rem', fontSize: '0.9rem', color: '#666' }}>
-        <p><strong>Información:</strong></p>
-        <ul style={{ paddingLeft: '1.5rem' }}>
-          <li>El código de sala debe ser único</li>
-          <li>Otros jugadores podrán unirse usando este código</li>
-          <li>Serás el creador y primer jugador de la partida</li>
-        </ul>
       </div>
     </div>
   );
