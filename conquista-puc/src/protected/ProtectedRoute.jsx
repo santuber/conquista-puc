@@ -9,41 +9,38 @@ const ProtectedRoute = ({ children }) => {
   const location = useLocation();
 
   useEffect(() => {
-    console.log('🔐 ProtectedRoute - Verificando autenticación:', { 
+    console.log('ProtectedRoute - Verificando autenticacion:', { 
       hasToken: !!token, 
       hasUser: !!user,
       token: token ? 'presente' : 'ausente'
     });
 
     if (!token) {
-      console.log('❌ No hay token, redirigiendo a login');
+      console.log('No hay token redirigiendo a login');
       setIsValid(false);
       return;
     }
 
-    // Si ya tenemos el usuario en el contexto, podemos confiar en que está autenticado
     if (user && user.id) {
-      console.log('✅ Usuario ya validado en contexto:', user);
+      console.log('Usuario ya validado en contexto:', user);
       setIsValid(true);
       return;
     }
 
-    // Si no tenemos usuario, intentamos validar el token con el backend
-    console.log('🔍 Validando token con el backend...');
+    console.log('Validando token con el backend');
     
-    // Primero intentemos con el endpoint /usuarios (que sabemos que existe)
     axios.get(`${import.meta.env.VITE_BACKEND_URL}/usuarios`, {
       headers: { Authorization: `Bearer ${token}` }
     })
     .then((response) => {
-      console.log('✅ Token válido, usuario autenticado');
+      console.log('Token valido usuario autenticado');
       setIsValid(true);
     })
     .catch((error) => {
-      console.error('❌ Error validando token:', error.response?.status, error.response?.data);
+      console.error('Error validando token:', error.response?.status, error.response?.data);
       
       if (error.response?.status === 401) {
-        console.log('🔄 Token expirado o inválido, cerrando sesión');
+        console.log('Token expirado o invalido, cerrando sesion');
         logout();
       }
       setIsValid(false);
@@ -59,17 +56,17 @@ const ProtectedRoute = ({ children }) => {
         height: '200px',
         fontSize: '1.2rem'
       }}>
-        🔐 Verificando autenticación...
+        Verificando autenticacion
       </div>
     );
   }
   
   if (!isValid) {
-    console.log('🚫 Acceso denegado, redirigiendo a login');
+    console.log('Acceso denegado, redirigiendo a login');
     return <Navigate to="/login" state={{ msg: "Acceso restringido. Inicia sesión para continuar", from: location.pathname }} replace />;
   }
 
-  console.log('✅ Acceso autorizado');
+  console.log('Acceso autorizado');
   return children;
 };
 

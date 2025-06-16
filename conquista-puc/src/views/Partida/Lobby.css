@@ -1,0 +1,19 @@
+@import './basepartida.css';
+
+.lobby-partida {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 2rem;
+  border: 1px solid #ffffff;
+  border-radius: 8px;
+  background-color: rgba(17, 52, 105, 0.95);
+  backdrop-filter: blur(10px);
+  color: #ffffff;
+}
+
+.lobby-partida h2 {
+  margin-top: 0;
+  color: #ffde22;
+}
+
+/* Estilos específicos para la vista Lobby pueden agregarse aquí si es necesario */

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import './Login.css';
 
 function Signup() {
   const [username, setUsername] = useState('');
@@ -34,59 +35,81 @@ function Signup() {
 
   return (
     <div className="Login">
-      {msg.length > 0 && <div className={error ? 'error' : 'successMsg'}>{msg}</div>}
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="username">
-            Nombre de usuario:
+      <div className="login-pergamino">
+        <h2 className="login-titulo">Registrarse</h2>
+        
+        {msg.length > 0 && (
+          <div className={`noticeMsg ${error ? 'error-msg' : 'success-msg'}`}>
+            {msg}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="login-form">
+          <div className="form-group">
+            <label htmlFor="username" className="form-label">
+              Nombre de usuario:
+            </label>
             <input
               id="username"
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
+              className="form-input"
+              placeholder="Ingresa tu nombre de usuario"
               required
             />
-          </label>
-        </div>
-        <div>
-          <label htmlFor="signup-email">
-            Correo:
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="signup-email" className="form-label">
+              Correo:
+            </label>
             <input
               id="signup-email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              className="form-input"
+              placeholder="Ingresa tu correo electrónico"
               required
             />
-          </label>
-        </div>
-        <div>
-          <label htmlFor="signup-password">
-            Contraseña:
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="signup-password" className="form-label">
+              Contraseña:
+            </label>
             <input
               id="signup-password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              className="form-input"
+              placeholder="Ingresa tu contraseña"
               required
             />
-          </label>
-        </div>
-        <div>
-          <label htmlFor="signup-rol">
-            Rol:
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="signup-rol" className="form-label">
+              Rol:
+            </label>
             <select
               id="signup-rol"
               value={rol}
               onChange={(e) => setRol(e.target.value)}
+              className="form-input"
             >
               <option value="user">Jugador</option>
               <option value="admin">Administrador</option>
             </select>
-          </label>
-        </div>
-        <button type="submit">Registrarse</button>
-      </form>
+          </div>
+
+          <button type="submit" className="login-button">
+            Registrarse
+          </button>
+        </form>
+      </div>
     </div>
   );
 }

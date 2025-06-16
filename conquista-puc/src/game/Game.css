@@ -1,0 +1,223 @@
+@import '../views/Partida/basepartida.css';
+
+.game-container {
+  padding: 1rem;
+}
+
+.game-header {
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background-color: rgba(17, 52, 105, 0.95);
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+  backdrop-filter: blur(10px);
+  color: #ffffff;
+}
+
+.game-header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.game-title {
+  margin: 0;
+  color: #ffffff;
+}
+
+.game-status {
+  margin: 5px 0 0 0;
+  color: #cccccc;
+}
+
+.turn-info {
+  text-align: right;
+}
+
+.my-turn {
+  margin: 0 0 10px 0;
+  color: #28a745;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.other-turn {
+  margin: 0 0 5px 0;
+  color: #dc3545;
+}
+
+.turn-phase {
+  font-size: 14px;
+  color: #6c757d;
+}
+
+.turn-waiting {
+  font-size: 14px;
+  color: #6c757d;
+}
+
+.controls-panel {
+  margin-bottom: 2rem;
+}
+
+.phase-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 1rem;
+  padding: 10px;
+  background-color: rgba(17, 52, 105, 0.95);
+  border-radius: 6px;
+  backdrop-filter: blur(10px);
+}
+
+.phase-button {
+  padding: 8px 16px;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  text-transform: capitalize;
+}
+
+.phase-button.active {
+  background-color: #007bff;
+}
+
+.phase-button.inactive {
+  background-color: #6c757d;
+}
+
+.end-turn-button {
+  padding: 8px 16px;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  margin-left: auto;
+}
+
+.end-turn-button.enabled {
+  background-color: #dc3545;
+  cursor: pointer;
+}
+
+.end-turn-button.disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+.phase-panel {
+  padding: 1rem;
+  border-radius: 6px;
+  border: 1px solid #ffeeba;
+  text-align: center;
+}
+
+.phase-panel.not-implemented {
+  background-color: rgba(255, 243, 205, 0.95);
+  backdrop-filter: blur(10px);
+}
+
+.phase-panel h3 {
+  margin-top: 0;
+}
+
+.phase-panel .warning-text {
+  color: #856404;
+}
+
+.facultades-section {
+  margin-top: 2rem;
+}
+
+.facultades-section h3 {
+  color: #ffffff;
+}
+
+.facultades-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.players-section {
+  margin-top: 2rem;
+}
+
+.players-section h3 {
+  color: #ffffff;
+}
+
+.players-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.player-card {
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #dee2e6;
+  background-color: rgba(248, 249, 250, 0.95);
+  backdrop-filter: blur(10px);
+}
+
+.player-card.current-player {
+  background-color: rgba(232, 245, 232, 0.95);
+}
+
+.player-card.active-turn {
+  border: 3px solid #ffc107;
+}
+
+.player-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.player-color {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+}
+
+.player-name {
+  font-weight: bold;
+}
+
+.player-order {
+  font-size: 12px;
+  color: #6c757d;
+}
+
+.error-message {
+  padding: 12px;
+  background-color: rgba(248, 215, 218, 0.95);
+  color: #721c24;
+  border-radius: 6px;
+  margin: 1rem 0;
+  text-align: center;
+  font-weight: bold;
+  backdrop-filter: blur(10px);
+}
+
+.loading-view {
+  text-align: center;
+  padding: 2rem;
+}
+
+.error-view {
+  text-align: center;
+  padding: 2rem;
+}
+
+.error-view p {
+  color: red;
+}
+
+.demo-cards {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 2rem;
+  gap: 1rem;
+}

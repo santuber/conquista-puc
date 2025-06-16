@@ -1,0 +1,92 @@
+@import './basepartida.css';
+
+.crear-partida {
+  max-width: 400px;
+  margin: 2rem auto;
+  padding: 2rem;
+  border: 1px solid #ffffff;
+  border-radius: 8px;
+  background-color: rgba(17, 52, 105, 0.95);
+  backdrop-filter: blur(10px);
+  color: #ffffff;
+}
+
+.crear-partida h2 {
+  margin-top: 0;
+  color: #ffde22;
+}
+
+.error-message {
+  color: #d32f2f;
+  background-color: rgba(255, 235, 238, 0.9);
+  padding: 0.5rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+
+.success-message {
+  color: #d7ec19;
+  background-color: rgba(232, 245, 232, 0.9);
+  padding: 0.5rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #0e5296;
+}
+
+.input-group {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.codigo-input {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: rgba(255, 255, 255, 0.9);
+  color: #333;
+}
+
+.generar-button {
+  padding: 0.5rem 1rem;
+  background-color: #103655;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.crear-button {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #ffcc00;
+  color:#103655;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.crear-button:disabled {
+  background-color: #ffffff;
+  cursor: not-allowed;
+}
+
+.info-section {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: #f3f3f3;
+}
+
+.info-section ul {
+  padding-left: 1.5rem;
+}
