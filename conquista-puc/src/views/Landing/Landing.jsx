@@ -29,10 +29,6 @@ function Landing() {
               <Link to="/unirse-partida" className="action-button secondary">
                 Unirse a Partida
               </Link>
-              
-              <Link to="/mis-partidas" className="action-button tertiary">
-                Mis Partidas
-              </Link>
             </div>
           </div>
         ) : (

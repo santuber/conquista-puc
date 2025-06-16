@@ -1,0 +1,15 @@
+.board-container {
+  padding: 1rem;
+  background-color: #ffffff;
+  border-radius: 8px;
+  border: 2px solid #dee2e6;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin: 1rem 0;
+}
+
+.board-placeholder {
+  text-align: center;
+  color: #6c757d;
+  font-size: 1.1rem;
+  margin: 0;
+}

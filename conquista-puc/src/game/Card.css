@@ -1,0 +1,68 @@
+.card-container {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 1rem;
+  width: 200px;
+  background-color: #113469 !important;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  border-left: 4px solid #ccc;
+  cursor: default;
+  transition: all 0.2s ease;
+}
+
+.card-container.selected {
+  border: 3px solid #007bff;
+  box-shadow: 0 4px 8px rgba(0,123,255,0.3);
+}
+
+.card-container.clickable {
+  cursor: pointer;
+}
+
+.card-container.clickable:hover {
+  transform: translateY(-2px);
+}
+
+.card-container.with-color {
+  border-left: 4px solid var(--player-color);
+}
+
+.card-title {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.95rem;
+  line-height: 1.2;
+  color: #ffffff;
+}
+
+.card-content {
+  margin-bottom: 0.5rem;
+}
+
+.card-troops {
+  margin: 0.25rem 0;
+  font-weight: bold;
+  color: #ffffff;
+}
+
+.card-troops-detail {
+  font-size: 0.8rem;
+  color: #cccccc;
+}
+
+.card-troops-detail div {
+  margin: 0.1rem 0;
+}
+
+.card-campus {
+  margin: 0.25rem 0;
+  font-size: 0.8rem;
+  color: #cccccc;
+  font-style: italic;
+}
+
+.card-controller {
+  margin: 0.25rem 0;
+  font-size: 0.85rem;
+  font-weight: bold;
+  color: #ffd700 !important;
+}
