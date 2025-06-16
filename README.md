@@ -3,6 +3,11 @@
 ## Descripcion
 Frontend de la aplicacion web "Conquista PUC"
 
+
+🔗 **Live Demo (Netlify):** https://684f8bf3cbe011b51ae90eba--conquista-puc.netlify.app/  
+Este frontend está integrado con Netlify para despliegues automáticos: al hacer push a `main`, Netlify ejecuta `yarn build` en el directorio 
+`conquista-puc` y publica `conquista-puc/dist` como sitio estático.
+
 ## Funcionalidades Implementadas
 
 ### Autenticacion
