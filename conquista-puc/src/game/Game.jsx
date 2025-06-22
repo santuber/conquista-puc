@@ -237,7 +237,7 @@ function Game() {
                 <Card 
                   key={facultad.id}
                   nombre={facultad.nombre}
-                  cantidad={Object.values(facultad.tropas || {}).reduce((total, count) => total + count, 0)}
+                  tropas={facultad.tropas}
                   controlador={facultad.controlada_por?.nombre_usuario}
                   color={facultad.controlada_por?.color}
                   campus={facultad.campus_nombre}
