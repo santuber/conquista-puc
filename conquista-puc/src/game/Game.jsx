@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import Board from './Board';
 import Card from './Card';
 import PanelRefuerzos from './PanelRefuerzos';
+import PanelAtaques from './PanelAtaques';
 import { AuthContext } from '../auth/AuthContext';
 import { partidasService } from '../services/partidasService';
 import { jugadasService } from '../services/jugadasService';
@@ -87,6 +88,10 @@ function Game() {
   const onRefuerzosAplicados = (resultado) => {
     cargarEstadoPartida();
     setFaseActual('ataques');
+  };
+
+  const onAtaqueRealizado = (resultado) => {
+    cargarEstadoPartida();
   };
 
   if (loading) {
@@ -212,10 +217,14 @@ function Game() {
             )}
 
             {faseActual === 'ataques' && (
-              <div className="phase-panel not-implemented">
-                <h3>Panel de Ataques</h3>
-                <p className="warning-text">no implementado aun</p>
-              </div>
+              <PanelAtaques
+                partidaId={id}
+                jugadorId={user.id}
+                facultadesControladas={facultadesControladas}
+                todasLasFacultades={partidaData?.facultades}
+                esMiTurno={esMiTurno}
+                onAtaqueRealizado={onAtaqueRealizado}
+              />
             )}
 
             {faseActual === 'movimientos' && (
@@ -269,7 +278,7 @@ function Game() {
                       <div className="player-name">
                         {participante.nombre_usuario}
                         {participante.usuario_id === user?.id && ' (TÚ)'}
-                        {participante.usuario_id === partidaData?.partida?.jugador_actual_id && ' 🎯'}
+                        {participante.usuario_id === partidaData?.partida?.jugador_actual_id && ' (TURNO ACTUAL)'}
                       </div>
                       <div className="player-order">
                         Orden: {participante.orden_turno}

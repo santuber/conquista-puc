@@ -1,0 +1,305 @@
+.panel-ataques {
+  background-color: #fff;
+  border-radius: 8px;
+  border: 2px solid #dc3545;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.panel-ataques.disabled {
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+  text-align: center;
+  color: #721c24;
+  font-weight: bold;
+}
+
+.panel-ataques h3 {
+  margin-bottom: 1rem;
+  color: #dc3545;
+}
+
+.resultado-ataque {
+  background: linear-gradient(135deg, #343a40 0%, #495057 100%);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  color: white;
+  text-align: center;
+}
+
+.batalla-visual {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 1rem 0;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.atacante, .defensor {
+  flex: 1;
+  text-align: center;
+}
+
+.atacante h5, .defensor h5 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1rem;
+}
+
+.dado-resultado {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 0.5rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.vs {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0 1rem;
+  color: #ffc107;
+}
+
+.resultado-final {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 1rem 0;
+  padding: 0.5rem;
+  border-radius: 6px;
+}
+
+.resultado-final.victoria {
+  background-color: rgba(40, 167, 69, 0.3);
+  color: #28a745;
+}
+
+.resultado-final.derrota {
+  background-color: rgba(220, 53, 69, 0.3);
+  color: #dc3545;
+}
+
+.territorio-conquistado {
+  background-color: rgba(255, 193, 7, 0.3);
+  color: #ffc107;
+  padding: 0.5rem;
+  border-radius: 6px;
+  font-weight: bold;
+  margin: 0.5rem 0;
+}
+
+.seleccion-secciones {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.seccion-origen, .seccion-objetivo {
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.seccion-origen h4 {
+  color: #28a745;
+  margin-bottom: 0.5rem;
+}
+
+.seccion-objetivo h4 {
+  color: #dc3545;
+  margin-bottom: 0.5rem;
+}
+
+.info {
+  font-size: 0.9rem;
+  color: #6c757d;
+  margin-bottom: 1rem;
+  font-style: italic;
+}
+
+.facultades-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.5rem;
+}
+
+.facultad-card {
+  border: 2px solid #dee2e6;
+  border-radius: 6px;
+  padding: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-color: #f8f9fa;
+}
+
+.facultad-card:hover {
+  border-color: #007bff;
+  background-color: #e9ecef;
+}
+
+.facultad-card.selected {
+  border-color: #007bff;
+  background-color: #d1ecf1;
+}
+
+.facultad-card.enemiga {
+  border-color: #dc3545;
+  background-color: #f8d7da;
+}
+
+.facultad-card.enemiga:hover {
+  background-color: #f5c6cb;
+}
+
+.facultad-card.enemiga.selected {
+  border-color: #dc3545;
+  background-color: #f5c6cb;
+}
+
+.facultad-nombre {
+  font-weight: bold;
+  font-size: 0.9rem;
+  margin-bottom: 0.25rem;
+  line-height: 1.2;
+}
+
+.facultad-tropas {
+  font-size: 0.8rem;
+  color: #495057;
+  margin-bottom: 0.25rem;
+}
+
+.facultad-controlador {
+  font-size: 0.75rem;
+  color: #6c757d;
+  font-style: italic;
+}
+
+.no-facultades {
+  text-align: center;
+  color: #6c757d;
+  font-style: italic;
+  padding: 1rem;
+}
+
+.resumen-ataque {
+  background-color: #e9ecef;
+  border-radius: 6px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.resumen-ataque h4 {
+  margin-bottom: 0.5rem;
+  color: #495057;
+}
+
+.ataque-info {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.origen-info, .objetivo-info {
+  flex: 1;
+  padding: 0.5rem;
+  border-radius: 4px;
+}
+
+.origen-info {
+  background-color: rgba(40, 167, 69, 0.1);
+  border-left: 3px solid #28a745;
+}
+
+.objetivo-info {
+  background-color: rgba(220, 53, 69, 0.1);
+  border-left: 3px solid #dc3545;
+}
+
+.controles {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.btn-atacar, .btn-resetear {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-atacar.enabled {
+  background-color: #dc3545;
+  color: white;
+}
+
+.btn-atacar.enabled:hover {
+  background-color: #c82333;
+}
+
+.btn-atacar.disabled {
+  background-color: #6c757d;
+  color: white;
+  cursor: not-allowed;
+}
+
+.btn-resetear {
+  background-color: #6c757d;
+  color: white;
+}
+
+.btn-resetear:hover {
+  background-color: #5a6268;
+}
+
+.mensaje-error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+  border-radius: 4px;
+  padding: 0.75rem;
+  text-align: center;
+  font-weight: bold;
+}
+
+.mensaje-exito {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+  border-radius: 4px;
+  padding: 0.75rem;
+  text-align: center;
+  font-weight: bold;
+}
+
+@media (max-width: 768px) {
+  .seleccion-secciones {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .batalla-visual {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .vs {
+    margin: 0.5rem 0;
+  }
+  
+  .ataque-info {
+    flex-direction: column;
+  }
+  
+  .controles {
+    flex-direction: column;
+  }
+}
