@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { jugadasService } from '../services/jugadasService';
+import DiceRoller from './DiceRoller';
 
 function PanelRefuerzos({ 
   partidaId, 
@@ -13,7 +14,24 @@ function PanelRefuerzos({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const [refuerzosDisponibles, setRefuerzosDisponibles] = useState(3);
+  const [baseRefuerzos] = useState(3);
+  const [diceResult, setDiceResult] = useState(null);
+
+  // Calcular refuerzos disponibles basándose en el resultado del dado
+  const getRefuerzosDisponibles = () => {
+    let disponibles = baseRefuerzos;
+    
+    if (lanzarDado && diceResult) {
+      // Si el dado es impar, se pierde un refuerzo
+      if (diceResult % 2 === 1) {
+        disponibles -= 1;
+      }
+    }
+    
+    return disponibles;
+  };
+
+  const refuerzosDisponibles = getRefuerzosDisponibles();
 
   const agregarRefuerzo = (facultadId) => {
     if (refuerzos.reduce((total, r) => total + r.cantidad, 0) >= refuerzosDisponibles) {
@@ -48,6 +66,20 @@ function PanelRefuerzos({
     setError('');
   };
 
+  const handleDiceToggle = (enabled) => {
+    setLanzarDado(enabled);
+    setDiceResult(null);
+    setError('');
+    
+    if (!enabled) {
+      const totalAsignado = refuerzos.reduce((total, r) => total + r.cantidad, 0);
+      if (totalAsignado > baseRefuerzos) {
+        const exceso = totalAsignado - baseRefuerzos;
+        setError(`Debes quitar ${exceso} refuerzo(s) ya que sin el dado tienes menos refuerzos disponibles`);
+      }
+    }
+  };
+
   const aplicarRefuerzos = async () => {
     if (!esMiTurno) {
       setError('No es tu turno');
@@ -79,16 +111,21 @@ function PanelRefuerzos({
 
       if (resultado.success) {
         setSuccess('Refuerzos aplicados exitosamente');
-        setRefuerzos([]);
-        setLanzarDado(false);
         
         if (resultado.data.mejoras_aplicadas) {
           setSuccess(`${resultado.data.mensaje}. ${resultado.data.mejoras_aplicadas}`);
         }
 
-        if (onRefuerzosAplicados) {
-          onRefuerzosAplicados(resultado.data);
-        }
+        setTimeout(() => {
+          setRefuerzos([]);
+          setLanzarDado(false);
+          setDiceResult(null);
+          
+          if (onRefuerzosAplicados) {
+            onRefuerzosAplicados(resultado.data);
+          }
+        }, 3000);
+
       } else {
         setError(resultado.error || 'Error al aplicar refuerzos');
       }
@@ -101,13 +138,37 @@ function PanelRefuerzos({
 
   const resetearRefuerzos = () => {
     setRefuerzos([]);
-    setLanzarDado(false);
+    handleDiceToggle(false);
     setError('');
     setSuccess('');
   };
 
+  // Obtener información sobre las mejoras del dado
+  const getDiceImprovements = () => {
+    if (!lanzarDado || !diceResult) return [];
+    
+    const improvements = [];
+    
+    if (diceResult === 2 || diceResult === 4) {
+      improvements.push({
+        type: 'ayudante',
+        count: 1,
+        description: '1 refuerzo será mejorado a Ayudante'
+      });
+    } else if (diceResult === 6) {
+      improvements.push({
+        type: 'profesor',
+        count: 1,
+        description: '1 refuerzo será mejorado a Profesor'
+      });
+    }
+    
+    return improvements;
+  };
+
   const totalAsignado = refuerzos.reduce((total, r) => total + r.cantidad, 0);
   const restantes = refuerzosDisponibles - totalAsignado;
+  const diceImprovements = getDiceImprovements();
 
   if (!esMiTurno) {
     return (
@@ -137,38 +198,41 @@ function PanelRefuerzos({
         Panel de Refuerzos
       </h3>
 
+      <DiceRoller
+        onDiceResult={setDiceResult}
+        isRolling={loading}
+        diceEnabled={lanzarDado}
+        onToggleDice={handleDiceToggle}
+        diceResult={diceResult}
+      />
+
       <div style={{
         marginBottom: '1rem',
         padding: '1rem',
         backgroundColor: '#e9ecef',
         borderRadius: '6px'
-      }}>
-        <div style={{ marginBottom: '0.5rem' }}>
-          <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <input
-              type="checkbox"
-              checked={lanzarDado}
-              onChange={(e) => setLanzarDado(e.target.checked)}
-              disabled={loading}
-            />
-            <span>Lanzar dado (puede modificar refuerzos disponibles y tipos)</span>
-          </label>
-        </div>
-        
-        <div style={{ fontSize: '14px', color: '#6c757d' }}>
+      }}>        
+        <div style={{ fontSize: '14px', color: '#6c757d', marginBottom: '0.5rem' }}>
           <strong>Refuerzos disponibles:</strong> {refuerzosDisponibles} | 
           <strong> Asignados:</strong> {totalAsignado} | 
           <strong> Restantes:</strong> {restantes}
         </div>
         
-        {lanzarDado && (
-          <div style={{ 
-            marginTop: '0.5rem', 
-            fontSize: '12px', 
-            color: '#856404',
-            fontStyle: 'italic'
+        {diceImprovements.length > 0 && (
+          <div style={{
+            padding: '8px 12px',
+            backgroundColor: '#d1ecf1',
+            border: '1px solid #bee5eb',
+            borderRadius: '4px',
+            fontSize: '13px',
+            color: '#0c5460'
           }}>
-            ⚠️ El dado puede reducir refuerzos (impar) o mejorar tropas (par)
+            <strong>Mejoras del dado:</strong>
+            {diceImprovements.map((improvement, index) => (
+              <div key={index} style={{ marginLeft: '10px' }}>
+                • {improvement.description}
+              </div>
+            ))}
           </div>
         )}
       </div>

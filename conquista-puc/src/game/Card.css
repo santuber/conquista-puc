@@ -47,6 +47,7 @@
 .card-troops-detail {
   font-size: 0.8rem;
   color: #cccccc;
+  margin-top: 0.5rem;
 }
 
 .card-troops-detail div {
@@ -65,4 +66,27 @@
   font-size: 0.85rem;
   font-weight: bold;
   color: #ffd700 !important;
+}
+
+.troop-type {
+  margin: 0.2rem 0;
+  padding: 0.2rem 0.5rem;
+  border-radius: 3px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.troop-type.estudiante {
+  background-color: rgba(108, 117, 125, 0.2);
+  color: #ffffff;
+}
+
+.troop-type.ayudante {
+  background-color: rgba(40, 167, 69, 0.2);
+  color: #90ee90;
+}
+
+.troop-type.profesor {
+  background-color: rgba(255, 193, 7, 0.2);
+  color: #ffd700;
 }

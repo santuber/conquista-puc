@@ -29,9 +29,9 @@ function Card({ nombre, cantidad, controlador, color, campus, tropas, onClick, s
         
         {tropas && typeof tropas === 'object' && (
           <div className="card-troops-detail">
-            {tropas.estudiante > 0 && <div>👨‍🎓 {tropas.estudiante}</div>}
-            {tropas.ayudante > 0 && <div>👨‍🏫 {tropas.ayudante}</div>}
-            {tropas.profesor > 0 && <div>👨‍🎓 {tropas.profesor}</div>}
+            {tropas.estudiante > 0 && <div className="troop-type estudiante">Estudiantes: {tropas.estudiante}</div>}
+            {tropas.ayudante > 0 && <div className="troop-type ayudante">Ayudantes: {tropas.ayudante}</div>}
+            {tropas.profesor > 0 && <div className="troop-type profesor">Profesores: {tropas.profesor}</div>}
           </div>
         )}
       </div>
