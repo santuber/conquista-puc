@@ -246,4 +246,40 @@ export const partidasService = {
       };
     }
   },
+
+  // cancelar una partida (solo creador)
+  async cancelarPartida(partidaId) {
+    try {
+      const response = await apiClient.post(`/partidas/${partidaId}/cancelar`);
+      return {
+        success: true,
+        data: response.data,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.response?.data?.error || 'Error al cancelar la partida',
+        details: error.response?.data?.details || null,
+        status: error.response?.status,
+      };
+    }
+  },
+
+  // salir de una partida (jugador normal)
+  async salirDePartida(partidaId) {
+    try {
+      const response = await apiClient.post(`/partidas/${partidaId}/salir`);
+      return {
+        success: true,
+        data: response.data,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.response?.data?.error || 'Error al salir de la partida',
+        details: error.response?.data?.details || null,
+        status: error.response?.status,
+      };
+    }
+  },
 };

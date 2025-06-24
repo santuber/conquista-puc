@@ -9,6 +9,7 @@ import Game from '../game/Game';
 import CrearPartida from '../views/Partida/CrearPartida';
 import UnirsePartida from '../views/Partida/UnirsePartida';
 import LobbyPartida from '../views/Partida/LobbyPartida';
+import GestorPartidas from '../views/Partida/GestorPartidas';
 import ProtectedRoute from '../protected/ProtectedRoute';
 import SimpleProtectedRoute from '../protected/SimpleProtectedRoute';
 import AdminRoute from '../protected/AdminRoute';
@@ -37,7 +38,7 @@ function Routing() {
         } />
         <Route path="/partida" element={
           <SimpleProtectedRoute>
-            <Game />
+            <GestorPartidas />
           </SimpleProtectedRoute>
         } />
         <Route path="/partida/:id" element={
