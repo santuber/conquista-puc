@@ -159,7 +159,9 @@ function UnirsePartida() {
             <div className="unirse-action">
               {partidaEncontrada.estado === 'en_espera' && 
                partidaEncontrada.jugadores_actuales < partidaEncontrada.jugadores_maximo &&
-               !partidaEncontrada.participantes.some(p => p.usuario_id === user?.id) ? (
+               !partidaEncontrada.participantes.some(
+                 p => p.usuario_id === user?.id && p.estado_en_partida === 'jugando'
+               ) ? (
                 <button 
                   onClick={unirseAPartida}
                   disabled={loading}
@@ -169,7 +171,9 @@ function UnirsePartida() {
                 </button>
               ) : (
                 <div className="unirse-status">
-                  {partidaEncontrada.participantes.some(p => p.usuario_id === user?.id) 
+                  {partidaEncontrada.participantes.some(
+                    p => p.usuario_id === user?.id && p.estado_en_partida === 'jugando'
+                  ) 
                     ? 'Ya estas en esta partida' 
                     : partidaEncontrada.estado !== 'en_espera'
                     ? 'La partida ya ha comenzado'
