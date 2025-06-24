@@ -1,27 +1,19 @@
 import { useState, useEffect } from 'react';
 import './DiceRoller.css';
 
-function DiceRoller({ onDiceResult, isRolling, diceEnabled, onToggleDice, diceResult }) {
-  const [lastResult, setLastResult] = useState(null);
+function DiceRoller({ onDiceResult, isRolling, diceEnabled, onToggleDice, diceResult, dadoLanzado }) {
   const [isRollingDice, setIsRollingDice] = useState(false);
 
   useEffect(() => {
-    if (diceResult && diceResult !== lastResult) {
-      setLastResult(diceResult);
+    if (diceEnabled && !diceResult && !isRollingDice) {
+      setIsRollingDice(true);
+      setTimeout(() => {
+        const result = Math.floor(Math.random() * 6) + 1;
+        onDiceResult(result);
+        setIsRollingDice(false);
+      }, 800);
     }
-  }, [diceResult, lastResult]);
-
-  const rollDice = () => {
-    if (isRollingDice) return;
-    
-    setIsRollingDice(true);
-    setTimeout(() => {
-      const result = Math.floor(Math.random() * 6) + 1;
-      setLastResult(result);
-      onDiceResult(result);
-      setIsRollingDice(false);
-    }, 800);
-  };
+  }, [diceEnabled, diceResult, isRollingDice, onDiceResult]);
 
   const getDiceEffectText = (number) => {
     if (!number) return '';
@@ -45,20 +37,15 @@ function DiceRoller({ onDiceResult, isRolling, diceEnabled, onToggleDice, diceRe
   };
 
   const getDiceFace = (number) => {
-    const faces = {1:'⚀', 2: '⚁', 3: '⚂', 4: '⚃', 5: '⚄', 6: '⚅'};
+    const faces = {1:'1', 2: '2', 3: '3', 4: '4', 5: '5', 6: '6'};
     return faces[number] || '?';
   };
 
   const handleDiceToggle = (enabled) => {
-    setLastResult(null);
     onToggleDice(enabled);
-    
-    if (enabled) {
-      rollDice();
-    }
   };
 
-  const effect = getDiceEffectText(lastResult);
+  const effect = getDiceEffectText(diceResult);
 
   return (
     <div className="dice-roller-container">
@@ -70,7 +57,7 @@ function DiceRoller({ onDiceResult, isRolling, diceEnabled, onToggleDice, diceRe
               type="checkbox"
               checked={diceEnabled}
               onChange={(e) => handleDiceToggle(e.target.checked)}
-              disabled={isRolling || isRollingDice}
+              disabled={isRolling || isRollingDice || dadoLanzado}
             />
             <span className="toggle-slider"></span>
           </label>
@@ -100,15 +87,15 @@ function DiceRoller({ onDiceResult, isRolling, diceEnabled, onToggleDice, diceRe
             </div>
           </div>
 
-          {(lastResult || isRollingDice) && (
+          {(diceResult || isRollingDice) && (
             <div className="dice-result">
               <div className="result-display">
                 <div className={`dice-face ${isRollingDice ? 'rolling' : ''}`}>
-                  {isRollingDice ? '?' : getDiceFace(lastResult)}
+                  {isRollingDice ? '?' : getDiceFace(diceResult)}
                 </div>
                 <div className="result-info">
                   <div className="result-number">
-                    {isRollingDice ? 'Lanzando...' : `Resultado: ${lastResult}`}
+                    {isRollingDice ? 'Lanzando...' : `Resultado: ${diceResult}`}
                   </div>
                   {!isRollingDice && effect && (
                     <div className={`result-effect ${effect.type}`}>
@@ -120,11 +107,11 @@ function DiceRoller({ onDiceResult, isRolling, diceEnabled, onToggleDice, diceRe
             </div>
           )}
 
-          {!lastResult && !isRollingDice && (
+          {!diceResult && !isRollingDice && (
             <div className="dice-preview">
               <div className="preview-dice">?</div>
               <p className="preview-text">
-                Activa el dado para lanzarlo
+                El dado se lanzara automaticamente
               </p>
             </div>
           )}

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { jugadasService } from '../services/jugadasService';
 import './PanelAtaques.css';
 
@@ -12,13 +12,34 @@ function PanelAtaques({
 }) {
   const [facultadOrigen, setFacultadOrigen] = useState(null);
   const [facultadObjetivo, setFacultadObjetivo] = useState(null);
+  const [tipoTropaSeleccionada, setTipoTropaSeleccionada] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [resultadoAtaque, setResultadoAtaque] = useState(null);
 
+  useEffect(() => {
+    setTipoTropaSeleccionada(null);
+  }, [facultadOrigen]);
+
+  const getTropasDisponibles = (facultad) => {
+    if (!facultad || !facultad.tropas) return [];
+    
+    return Object.entries(facultad.tropas)
+      .filter(([tipo, cantidad]) => cantidad > 0)
+      .map(([tipo, cantidad]) => ({ tipo, cantidad }));
+  };
+
+  const getTipoTropaLabel = (tipo) => {
+    const labels = {
+      'estudiante': 'Estudiante',
+      'ayudante': 'Ayudante',
+      'profesor': 'Profesor'
+    };
+    return labels[tipo] || tipo;
+  };
+
   const getFacultadesEnemigas = () => {
-    if (!todasLasFacultades) return [];
     return todasLasFacultades.filter(facultad => 
       facultad.controlada_por?.usuario_id !== jugadorId &&
       facultad.tropas &&
@@ -40,6 +61,11 @@ function PanelAtaques({
       return;
     }
 
+    if (!tipoTropaSeleccionada) {
+      setError('Debes seleccionar el tipo de tropa para atacar');
+      return;
+    }
+
     if (!esMiTurno) {
       setError('No es tu turno');
       return;
@@ -55,7 +81,8 @@ function PanelAtaques({
         partidaId,
         jugadorId,
         facultadOrigen.id,
-        facultadObjetivo.id
+        facultadObjetivo.id,
+        tipoTropaSeleccionada
       );
 
       if (resultado.success) {
@@ -65,6 +92,7 @@ function PanelAtaques({
         setTimeout(() => {
           setFacultadOrigen(null);
           setFacultadObjetivo(null);
+          setTipoTropaSeleccionada(null);
           setResultadoAtaque(null);
           
           if (onAtaqueRealizado) {
@@ -85,6 +113,7 @@ function PanelAtaques({
   const resetearSeleccion = () => {
     setFacultadOrigen(null);
     setFacultadObjetivo(null);
+    setTipoTropaSeleccionada(null);
     setError('');
     setSuccess('');
     setResultadoAtaque(null);
@@ -183,6 +212,28 @@ function PanelAtaques({
             <p className="no-facultades">No hay facultades enemigas disponibles</p>
           )}
         </div>
+
+        {facultadOrigen && (
+          <div className="seccion-tropas">
+            <h4>3. Selecciona tipo de tropa para atacar</h4>
+            <p className="info">Elige qué tipo de tropa usar en el ataque</p>
+            <div className="tropas-grid">
+              {getTropasDisponibles(facultadOrigen).map(({ tipo, cantidad }) => (
+                <div 
+                  key={tipo}
+                  className={`tropa-card ${tipoTropaSeleccionada === tipo ? 'selected' : ''}`}
+                  onClick={() => setTipoTropaSeleccionada(tipo)}
+                >
+                  <div className="tropa-tipo">{getTipoTropaLabel(tipo)}</div>
+                  <div className="tropa-cantidad">Disponibles: {cantidad}</div>
+                </div>
+              ))}
+            </div>
+            {getTropasDisponibles(facultadOrigen).length === 0 && (
+              <p className="no-tropas">No hay tropas disponibles en esta facultad</p>
+            )}
+          </div>
+        )}
       </div>
 
       {facultadOrigen && facultadObjetivo && (
@@ -195,6 +246,11 @@ function PanelAtaques({
             <div className="objetivo-info">
               <strong>Objetivo:</strong> {facultadObjetivo.nombre}
             </div>
+            {tipoTropaSeleccionada && (
+              <div className="tropa-info">
+                <strong>Tropa atacante:</strong> {getTipoTropaLabel(tipoTropaSeleccionada)}
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -202,8 +258,8 @@ function PanelAtaques({
       <div className="controles">
         <button
           onClick={realizarAtaque}
-          disabled={loading || !facultadOrigen || !facultadObjetivo}
-          className={`btn-atacar ${loading || !facultadOrigen || !facultadObjetivo ? 'disabled' : 'enabled'}`}
+          disabled={loading || !facultadOrigen || !facultadObjetivo || !tipoTropaSeleccionada}
+          className={`btn-atacar ${loading || !facultadOrigen || !facultadObjetivo || !tipoTropaSeleccionada ? 'disabled' : 'enabled'}`}
         >
           {loading ? 'Atacando...' : 'Realizar Ataque'}
         </button>
