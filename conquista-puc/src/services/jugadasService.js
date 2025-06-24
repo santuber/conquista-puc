@@ -45,13 +45,14 @@ export const jugadasService = {
     }
   },
 
-  async aplicarRefuerzos(id_juego, id_jugador, refuerzos, lanzar_dado = false) {
+  async aplicarRefuerzos(id_juego, id_jugador, refuerzos, lanzar_dado = false, resultado_dado = null) {
     try {
       const response = await apiClient.post('/jugadas/reinforce', {
         id_juego,
         id_jugador,
         refuerzos,
-        lanzar_dado
+        lanzar_dado,
+        resultado_dado_frontend: resultado_dado
       });
       
       return {
@@ -68,14 +69,21 @@ export const jugadasService = {
     }
   },
 
-  async realizarAtaque(id_juego, id_jugador, facultad_origen_id, facultad_objetivo) {
+  async realizarAtaque(id_juego, id_jugador, facultad_origen_id, facultad_objetivo, tipo_tropa = null) {
     try {
-      const response = await apiClient.post('/jugadas/attack', {
+      const payload = {
         id_juego,
         id_jugador,
         facultad_origen_id,
         facultad_objetivo
-      });
+      };
+      
+      // Añadir tipo de tropa si se especifica
+      if (tipo_tropa) {
+        payload.tipo_tropa = tipo_tropa;
+      }
+      
+      const response = await apiClient.post('/jugadas/attack', payload);
       
       return {
         success: true,

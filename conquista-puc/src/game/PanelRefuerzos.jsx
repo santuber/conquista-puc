@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { jugadasService } from '../services/jugadasService';
 import DiceRoller from './DiceRoller';
+import './PanelRefuerzos.css';
 
 function PanelRefuerzos({ 
   partidaId, 
@@ -9,75 +10,105 @@ function PanelRefuerzos({
   esMiTurno, 
   onRefuerzosAplicados 
 }) {
-  const [refuerzos, setRefuerzos] = useState([]);
   const [lanzarDado, setLanzarDado] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const [baseRefuerzos] = useState(3);
-  const [diceResult, setDiceResult] = useState(null);
+  const [tropasDisponibles, setTropasDisponibles] = useState([]);
+  const [tropasAsignadas, setTropasAsignadas] = useState([]);
+  const [resultadoDado, setResultadoDado] = useState(null);
+  const [dadoLanzado, setDadoLanzado] = useState(false);
 
-  // Calcular refuerzos disponibles basándose en el resultado del dado
-  const getRefuerzosDisponibles = () => {
-    let disponibles = baseRefuerzos;
-    
-    if (lanzarDado && diceResult) {
-      // Si el dado es impar, se pierde un refuerzo
-      if (diceResult % 2 === 1) {
-        disponibles -= 1;
+  const calcularTropasDisponibles = (dadoResultado = null) => {
+    const tropas = [];
+    let cantidadBase = 3;
+    let mejoras = [];
+
+    if (lanzarDado && dadoResultado) {
+      if (dadoResultado % 2 === 1) {
+        cantidadBase = 2;
+      } else if (dadoResultado === 2 || dadoResultado === 4) {
+        mejoras.push('ayudante');
+      } else if (dadoResultado === 6) {
+        mejoras.push('profesor');
       }
     }
-    
-    return disponibles;
-  };
 
-  const refuerzosDisponibles = getRefuerzosDisponibles();
-
-  const agregarRefuerzo = (facultadId) => {
-    if (refuerzos.reduce((total, r) => total + r.cantidad, 0) >= refuerzosDisponibles) {
-      setError('Ya has asignado todos los refuerzos disponibles');
-      return;
+    for (let i = 0; i < cantidadBase; i++) {
+      const nivel = mejoras.length > 0 ? mejoras.shift() : 'estudiante';
+      tropas.push({
+        id: `tropa_${Date.now()}_${i}`,
+        nivel: nivel,
+        asignada: false,
+        facultad_id: null
+      });
     }
 
-    const refuerzoExistente = refuerzos.find(r => r.facultad_id === facultadId);
-    
-    if (refuerzoExistente) {
-      setRefuerzos(prev => prev.map(r => 
-        r.facultad_id === facultadId 
-          ? { ...r, cantidad: r.cantidad + 1 }
-          : r
-      ));
-    } else {
-      setRefuerzos(prev => [...prev, { facultad_id: facultadId, cantidad: 1 }]);
-    }
-    setError('');
+    return tropas;
   };
 
-  const quitarRefuerzo = (facultadId) => {
-    setRefuerzos(prev => {
-      const nuevosRefuerzos = prev.map(r => 
-        r.facultad_id === facultadId 
-          ? { ...r, cantidad: Math.max(0, r.cantidad - 1) }
-          : r
-      ).filter(r => r.cantidad > 0);
-      
-      return nuevosRefuerzos;
+  const actualizarTropasDisponibles = (dadoResultado = null) => {
+    const nuevasTropas = calcularTropasDisponibles(dadoResultado);
+    setTropasDisponibles(nuevasTropas);
+    setTropasAsignadas([]);
+  };
+
+  useEffect(() => {
+    if (!lanzarDado) {
+      actualizarTropasDisponibles();
+      setResultadoDado(null);
+      setDadoLanzado(false);
+    }
+  }, [lanzarDado]);
+
+  const asignarTropa = (tropaId, facultadId) => {
+    setTropasDisponibles(prev => 
+      prev.map(tropa => 
+        tropa.id === tropaId 
+          ? { ...tropa, asignada: true, facultad_id: facultadId }
+          : tropa
+      )
+    );
+
+    setTropasAsignadas(prev => {
+      const nuevaAsignacion = { tropa_id: tropaId, facultad_id: facultadId };
+      return [...prev.filter(a => a.tropa_id !== tropaId), nuevaAsignacion];
     });
+
     setError('');
+  };
+
+  const desasignarTropa = (tropaId) => {
+    setTropasDisponibles(prev => 
+      prev.map(tropa => 
+        tropa.id === tropaId 
+          ? { ...tropa, asignada: false, facultad_id: null }
+          : tropa
+      )
+    );
+
+    setTropasAsignadas(prev => prev.filter(a => a.tropa_id !== tropaId));
+    setError('');
+  };
+
+  useEffect(() => {
+    actualizarTropasDisponibles();
+  }, []);
+
+  const handleDiceResult = (resultado) => {
+    setResultadoDado(resultado);
+    setDadoLanzado(true);
+    actualizarTropasDisponibles(resultado);
   };
 
   const handleDiceToggle = (enabled) => {
-    setLanzarDado(enabled);
-    setDiceResult(null);
-    setError('');
-    
-    if (!enabled) {
-      const totalAsignado = refuerzos.reduce((total, r) => total + r.cantidad, 0);
-      if (totalAsignado > baseRefuerzos) {
-        const exceso = totalAsignado - baseRefuerzos;
-        setError(`Debes quitar ${exceso} refuerzo(s) ya que sin el dado tienes menos refuerzos disponibles`);
-      }
+    if (dadoLanzado && enabled !== lanzarDado) {
+      setError('No puedes cambiar la opción del dado después de haberlo lanzado');
+      return;
     }
+    
+    setLanzarDado(enabled);
+    setError('');
   };
 
   const aplicarRefuerzos = async () => {
@@ -86,14 +117,22 @@ function PanelRefuerzos({
       return;
     }
 
-    const totalAsignado = refuerzos.reduce((total, r) => total + r.cantidad, 0);
-    if (totalAsignado !== refuerzosDisponibles) {
-      setError(`Debes asignar exactamente ${refuerzosDisponibles} refuerzos`);
+    const tropasNoAsignadas = tropasDisponibles.filter(t => !t.asignada);
+    if (tropasNoAsignadas.length > 0) {
+      setError('Debes asignar todas las tropas antes de aplicar los refuerzos');
       return;
     }
 
-    if (refuerzos.length === 0) {
-      setError('Debes asignar al menos un refuerzo');
+    const refuerzosParaBackend = facultadesControladas.map(facultad => {
+      const tropasEnFacultad = tropasAsignadas.filter(a => a.facultad_id === facultad.id);
+      return {
+        facultad_id: facultad.id,
+        cantidad: tropasEnFacultad.length
+      };
+    }).filter(r => r.cantidad > 0);
+
+    if (refuerzosParaBackend.length === 0) {
+      setError('Debes asignar al menos una tropa');
       return;
     }
 
@@ -102,34 +141,37 @@ function PanelRefuerzos({
     setSuccess('');
 
     try {
+      //enviar informacion del dado al backend
       const resultado = await jugadasService.aplicarRefuerzos(
-        partidaId,
-        jugadorId,
-        refuerzos,
-        lanzarDado
+        partidaId, 
+        jugadorId, 
+        refuerzosParaBackend,
+        lanzarDado,
+        dadoLanzado ? resultadoDado : null //enviar el resultado si se lanzo
       );
 
       if (resultado.success) {
-        setSuccess('Refuerzos aplicados exitosamente');
+        let mensaje = 'Refuerzos aplicados correctamente';
         
-        if (resultado.data.mejoras_aplicadas) {
-          setSuccess(`${resultado.data.mensaje}. ${resultado.data.mejoras_aplicadas}`);
-        }
-
-        setTimeout(() => {
-          setRefuerzos([]);
-          setLanzarDado(false);
-          setDiceResult(null);
-          
-          if (onRefuerzosAplicados) {
-            onRefuerzosAplicados(resultado.data);
+        if (dadoLanzado && resultadoDado) {
+          if (resultadoDado % 2 === 1) {
+            mensaje += ` - Dado: ${resultadoDado} (Se perdió 1 refuerzo)`;
+          } else if (resultadoDado === 2 || resultadoDado === 4) {
+            mensaje += ` - Dado: ${resultadoDado} (1 tropa mejorada a Ayudante)`;
+          } else if (resultadoDado === 6) {
+            mensaje += ` - Dado: ${resultadoDado} (1 tropa mejorada a Profesor)`;
           }
-        }, 3000);
-
+        }
+        
+        setSuccess(mensaje);
+        setTimeout(() => {
+          onRefuerzosAplicados(resultado);
+        }, 2000);
       } else {
         setError(resultado.error || 'Error al aplicar refuerzos');
       }
     } catch (error) {
+      console.error('Error al aplicar refuerzos:', error);
       setError('Error inesperado al aplicar refuerzos');
     } finally {
       setLoading(false);
@@ -137,221 +179,146 @@ function PanelRefuerzos({
   };
 
   const resetearRefuerzos = () => {
-    setRefuerzos([]);
+    setTropasDisponibles([]);
+    setTropasAsignadas([]);
+    setResultadoDado(null);
+    setDadoLanzado(false);
     handleDiceToggle(false);
     setError('');
     setSuccess('');
   };
 
-  // Obtener información sobre las mejoras del dado
-  const getDiceImprovements = () => {
-    if (!lanzarDado || !diceResult) return [];
-    
-    const improvements = [];
-    
-    if (diceResult === 2 || diceResult === 4) {
-      improvements.push({
-        type: 'ayudante',
-        count: 1,
-        description: '1 refuerzo será mejorado a Ayudante'
-      });
-    } else if (diceResult === 6) {
-      improvements.push({
-        type: 'profesor',
-        count: 1,
-        description: '1 refuerzo será mejorado a Profesor'
-      });
+  const getTropaText = (nivel) => {
+    switch (nivel) {
+      case 'estudiante': return 'Estudiante';
+      case 'ayudante': return 'Ayudante';
+      case 'profesor': return 'Profesor';
+      default: return 'Desconocido';
     }
-    
-    return improvements;
   };
-
-  const totalAsignado = refuerzos.reduce((total, r) => total + r.cantidad, 0);
-  const restantes = refuerzosDisponibles - totalAsignado;
-  const diceImprovements = getDiceImprovements();
 
   if (!esMiTurno) {
     return (
-      <div style={{
-        padding: '1rem',
-        backgroundColor: '#f8d7da',
-        borderRadius: '6px',
-        border: '1px solid #f5c6cb',
-        textAlign: 'center'
-      }}>
-        <p style={{ color: '#721c24', margin: 0, fontWeight: 'bold' }}>
-          No es tu turno para aplicar refuerzos
-        </p>
+      <div className="no-turno-message">
+        <p>No es tu turno para aplicar refuerzos</p>
       </div>
     );
   }
 
+  const tropasNoAsignadas = tropasDisponibles.filter(t => !t.asignada);
+  const todasAsignadas = tropasDisponibles.length > 0 && tropasNoAsignadas.length === 0;
+
   return (
-    <div style={{
-      padding: '1.5rem',
-      backgroundColor: '#fff',
-      borderRadius: '8px',
-      border: '2px solid #007bff',
-      marginBottom: '1rem'
-    }}>
-      <h3 style={{ marginBottom: '1rem', color: '#007bff' }}>
-        Panel de Refuerzos
-      </h3>
+    <div className="panel-refuerzos">
+      <h3>Panel de Refuerzos</h3>
 
       <DiceRoller
-        onDiceResult={setDiceResult}
+        onDiceResult={handleDiceResult}
         isRolling={loading}
         diceEnabled={lanzarDado}
         onToggleDice={handleDiceToggle}
-        diceResult={diceResult}
+        diceResult={dadoLanzado ? resultadoDado : null}
+        dadoLanzado={dadoLanzado}
       />
 
-      <div style={{
-        marginBottom: '1rem',
-        padding: '1rem',
-        backgroundColor: '#e9ecef',
-        borderRadius: '6px'
-      }}>        
-        <div style={{ fontSize: '14px', color: '#6c757d', marginBottom: '0.5rem' }}>
-          <strong>Refuerzos disponibles:</strong> {refuerzosDisponibles} | 
-          <strong> Asignados:</strong> {totalAsignado} | 
-          <strong> Restantes:</strong> {restantes}
+      {lanzarDado && !dadoLanzado && (
+        <div className="dado-info dado-activado">
+          <h5>Dado Activado</h5>
+          <p>Presiona el botón "Lanzar Dado" para ver tus tropas de refuerzo.</p>
         </div>
-        
-        {diceImprovements.length > 0 && (
-          <div style={{
-            padding: '8px 12px',
-            backgroundColor: '#d1ecf1',
-            border: '1px solid #bee5eb',
-            borderRadius: '4px',
-            fontSize: '13px',
-            color: '#0c5460'
-          }}>
-            <strong>Mejoras del dado:</strong>
-            {diceImprovements.map((improvement, index) => (
-              <div key={index} style={{ marginLeft: '10px' }}>
-                • {improvement.description}
+      )}
+
+      {dadoLanzado && resultadoDado && (
+        <div className={`dado-info dado-resultado ${resultadoDado % 2 === 1 ? 'dado-resultado-malo' : 'dado-resultado-bueno'}`}>
+          <h5>Resultado del Dado: {resultadoDado}</h5>
+          <p>
+            {resultadoDado % 2 === 1 && 'Se perdió 1 refuerzo - Solo tienes 2 tropas disponibles'}
+            {resultadoDado === 2 || resultadoDado === 4 ? 'Una tropa se mejoró a Ayudante' : ''}
+            {resultadoDado === 6 && 'Una tropa se mejoró a Profesor'}
+          </p>
+        </div>
+      )}
+
+      {tropasDisponibles.length > 0 && ((!lanzarDado) || (lanzarDado && dadoLanzado)) && (
+        <div className="tropas-disponibles">
+          <h4>Tropas Disponibles para Refuerzo:</h4>
+          
+          <div className="tropas-badges">
+            {tropasDisponibles.map((tropa) => (
+              <div
+                key={tropa.id}
+                className={`tropa-badge ${tropa.nivel} ${tropa.asignada ? 'asignada' : ''}`}
+                onClick={() => tropa.asignada && desasignarTropa(tropa.id)}
+                title={tropa.asignada ? 'Click para desasignar' : ''}
+              >
+                {getTropaText(tropa.nivel)}
+                {tropa.asignada && ' (Asignada)'}
               </div>
             ))}
           </div>
-        )}
-      </div>
 
-      <div style={{ marginBottom: '1rem' }}>
-        <h4 style={{ marginBottom: '0.5rem' }}>Tus Facultades:</h4>
-        <div style={{ 
-          display: 'grid', 
-          gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', 
-          gap: '10px' 
-        }}>
-          {facultadesControladas.map((facultad) => {
-            const refuerzoActual = refuerzos.find(r => r.facultad_id === facultad.id);
-            const cantidadAsignada = refuerzoActual?.cantidad || 0;
-            
-            return (
-              <div 
-                key={facultad.id}
-                style={{
-                  padding: '12px',
-                  backgroundColor: cantidadAsignada > 0 ? '#d4edda' : '#f8f9fa',
-                  borderRadius: '6px',
-                  border: cantidadAsignada > 0 ? '2px solid #28a745' : '1px solid #dee2e6'
-                }}
-              >
-                <div style={{ 
-                  display: 'flex', 
-                  justifyContent: 'space-between', 
-                  alignItems: 'center',
-                  marginBottom: '8px'
-                }}>
-                  <div>
-                    <div style={{ fontWeight: 'bold', fontSize: '14px' }}>
-                      {facultad.nombre}
-                    </div>
-                    <div style={{ fontSize: '12px', color: '#6c757d' }}>
-                      Tropas actuales: {facultad.tropas_totales || 0}
-                    </div>
-                  </div>
-                  {cantidadAsignada > 0 && (
-                    <div style={{
-                      backgroundColor: '#28a745',
-                      color: 'white',
-                      borderRadius: '50%',
-                      width: '24px',
-                      height: '24px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '12px',
-                      fontWeight: 'bold'
-                    }}>
-                      {cantidadAsignada}
-                    </div>
-                  )}
-                </div>
-                
-                <div style={{ display: 'flex', gap: '5px' }}>
-                  <button
-                    onClick={() => agregarRefuerzo(facultad.id)}
-                    disabled={loading || restantes <= 0}
-                    style={{
-                      flex: 1,
-                      padding: '6px',
-                      backgroundColor: restantes > 0 ? '#28a745' : '#6c757d',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '4px',
-                      fontSize: '12px',
-                      cursor: restantes > 0 ? 'pointer' : 'not-allowed'
-                    }}
-                  >
-                    + Refuerzo
-                  </button>
-                  
-                  {cantidadAsignada > 0 && (
-                    <button
-                      onClick={() => quitarRefuerzo(facultad.id)}
-                      disabled={loading}
-                      style={{
-                        flex: 1,
-                        padding: '6px',
-                        backgroundColor: '#dc3545',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '4px',
-                        fontSize: '12px',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      - Quitar
-                    </button>
-                  )}
-                </div>
-              </div>
-            );
-          })}
+          <div className="tropas-stats">
+            <strong>Total disponibles:</strong> {tropasDisponibles.length} | 
+            <strong> Asignadas:</strong> {tropasDisponibles.filter(t => t.asignada).length} | 
+            <strong> Pendientes:</strong> {tropasNoAsignadas.length}
+          </div>
         </div>
-      </div>
+      )}
 
-      <div style={{ 
-        display: 'flex', 
-        gap: '10px', 
-        justifyContent: 'center',
-        marginBottom: '1rem'
-      }}>
+      {tropasDisponibles.length > 0 && ((!lanzarDado) || (lanzarDado && dadoLanzado)) && (
+        <div className="facultades-asignacion">
+          <h4>Asignar a tus Facultades:</h4>
+          <div className="facultades-grid">
+            {facultadesControladas.map((facultad) => {
+              const tropasEnFacultad = tropasAsignadas.filter(a => a.facultad_id === facultad.id);
+              return (
+                <div key={facultad.id} className="facultad-card">
+                  <h5>{facultad.nombre}</h5>
+                  
+                  <div className="tropas-asignadas">
+                    {tropasEnFacultad.map((asignacion) => {
+                      const tropa = tropasDisponibles.find(t => t.id === asignacion.tropa_id);
+                      if (!tropa) return null;
+                      
+                      return (
+                        <div
+                          key={asignacion.tropa_id}
+                          className={`tropa-asignada ${tropa.nivel}`}
+                        >
+                          {getTropaText(tropa.nivel)}
+                        </div>
+                      );
+                    })}
+                    {tropasEnFacultad.length === 0 && (
+                      <span className="mensaje-vacio">
+                        Ninguna tropa asignada
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="botones-asignar">
+                    {tropasNoAsignadas.map((tropa) => (
+                      <button
+                        key={tropa.id}
+                        onClick={() => asignarTropa(tropa.id, facultad.id)}
+                        className={`boton-asignar ${tropa.nivel}`}
+                      >
+                        +{getTropaText(tropa.nivel)}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      <div className="controles-principales">
         <button
           onClick={aplicarRefuerzos}
-          disabled={loading || totalAsignado !== refuerzosDisponibles}
-          style={{
-            padding: '12px 24px',
-            backgroundColor: totalAsignado === refuerzosDisponibles && !loading ? '#007bff' : '#6c757d',
-            color: 'white',
-            border: 'none',
-            borderRadius: '6px',
-            fontSize: '16px',
-            fontWeight: 'bold',
-            cursor: totalAsignado === refuerzosDisponibles && !loading ? 'pointer' : 'not-allowed'
-          }}
+          disabled={loading || !todasAsignadas}
+          className={`boton-principal aplicar ${(!todasAsignadas || loading) ? 'disabled' : ''}`}
         >
           {loading ? 'Aplicando...' : 'Aplicar Refuerzos'}
         </button>
@@ -359,46 +326,20 @@ function PanelRefuerzos({
         <button
           onClick={resetearRefuerzos}
           disabled={loading}
-          style={{
-            padding: '12px 24px',
-            backgroundColor: '#6c757d',
-            color: 'white',
-            border: 'none',
-            borderRadius: '6px',
-            fontSize: '16px',
-            cursor: 'pointer'
-          }}
+          className="boton-principal resetear"
         >
           Resetear
         </button>
       </div>
 
       {error && (
-        <div style={{
-          padding: '10px',
-          backgroundColor: '#f8d7da',
-          color: '#721c24',
-          borderRadius: '4px',
-          marginBottom: '10px',
-          fontSize: '14px',
-          fontWeight: 'bold',
-          textAlign: 'center'
-        }}>
+        <div className="mensaje-error">
           {error}
         </div>
       )}
 
       {success && (
-        <div style={{
-          padding: '10px',
-          backgroundColor: '#d4edda',
-          color: '#155724',
-          borderRadius: '4px',
-          marginBottom: '10px',
-          fontSize: '14px',
-          fontWeight: 'bold',
-          textAlign: 'center'
-        }}>
+        <div className="mensaje-exito">
           {success}
         </div>
       )}

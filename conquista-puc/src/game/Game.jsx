@@ -25,6 +25,10 @@ function Game() {
   const [error, setError] = useState('');
   const [finalizandoTurno, setFinalizandoTurno] = useState(false);
   const [faseActual, setFaseActual] = useState('refuerzos');
+  const [fasesCompletadas, setFasesCompletadas] = useState({
+    refuerzos: false,
+    accion: false
+  });
 
   useEffect(() => {
     if (id) {
@@ -44,6 +48,18 @@ function Game() {
         console.log('DEBUG: Estado completo de la partida:', resultado.data);
         console.log('DEBUG: Facultades controladas raw:', resultado.data.facultades_controladas);
         console.log('DEBUG: User ID:', user?.id);
+        
+        const jugadorAnterior = partidaData?.partida?.jugador_actual_id;
+        const jugadorActual = resultado.data.partida?.jugador_actual_id;
+        
+        if (jugadorAnterior && jugadorAnterior !== jugadorActual) {
+          setFaseActual('refuerzos');
+          setFasesCompletadas({
+            refuerzos: false,
+            accion: false
+          });
+        }
+        
         setPartidaData(resultado.data);
         
         if (resultado.data.partida.estado === ESTADOS_PARTIDA.EN_ESPERA) {
@@ -74,6 +90,10 @@ function Game() {
 
       if (resultado.success) {
         setFaseActual('refuerzos');
+        setFasesCompletadas({
+          refuerzos: false,
+          accion: false
+        });
         await cargarEstadoPartida();
       } else {
         setError(resultado.error || 'Error al finalizar turno');
@@ -86,12 +106,48 @@ function Game() {
   };
 
   const onRefuerzosAplicados = (resultado) => {
-    cargarEstadoPartida();
+    setFasesCompletadas(prev => ({
+      ...prev,
+      refuerzos: true
+    }));
     setFaseActual('ataques');
+    cargarEstadoPartida();
   };
 
   const onAtaqueRealizado = (resultado) => {
+    setFasesCompletadas(prev => ({
+      ...prev,
+      accion: true
+    }));
     cargarEstadoPartida();
+  };
+
+  const onMovimientoRealizado = (resultado) => {
+    setFasesCompletadas(prev => ({
+      ...prev,
+      accion: true
+    }));
+    cargarEstadoPartida();
+  };
+
+  const cambiarFase = (nuevaFase) => {
+    if (nuevaFase === 'refuerzos' && fasesCompletadas.refuerzos) {
+      setError('Ya completaste la fase de refuerzos en este turno');
+      return;
+    }
+    
+    if (nuevaFase === 'ataques' && !fasesCompletadas.refuerzos) {
+      setError('Debes completar la fase de refuerzos primero');
+      return;
+    }
+    
+    if (nuevaFase === 'movimientos' && !fasesCompletadas.refuerzos) {
+      setError('Debes completar la fase de refuerzos primero');
+      return;
+    }
+    
+    setError('');
+    setFaseActual(nuevaFase);
   };
 
   if (loading) {
@@ -187,15 +243,29 @@ function Game() {
         {esMiTurno && (
           <div className="controls-panel">
             <div className="phase-buttons">
-              {['refuerzos', 'ataques', 'movimientos'].map((fase) => (
-                <button
-                  key={fase}
-                  onClick={() => setFaseActual(fase)}
-                  className={`phase-button ${faseActual === fase ? 'active' : 'inactive'}`}
-                >
-                  {fase}
-                </button>
-              ))}
+              <button
+                onClick={() => cambiarFase('refuerzos')}
+                disabled={fasesCompletadas.refuerzos}
+                className={`phase-button ${faseActual === 'refuerzos' ? 'active' : ''} ${fasesCompletadas.refuerzos ? 'completed' : ''}`}
+              >
+                Refuerzos {fasesCompletadas.refuerzos ? '✓' : ''}
+              </button>
+              
+              <button
+                onClick={() => cambiarFase('ataques')}
+                disabled={!fasesCompletadas.refuerzos}
+                className={`phase-button ${faseActual === 'ataques' ? 'active' : ''} ${!fasesCompletadas.refuerzos ? 'disabled' : ''}`}
+              >
+                Ataques
+              </button>
+              
+              <button
+                onClick={() => cambiarFase('movimientos')}
+                disabled={!fasesCompletadas.refuerzos}
+                className={`phase-button ${faseActual === 'movimientos' ? 'active' : ''} ${!fasesCompletadas.refuerzos ? 'disabled' : ''}`}
+              >
+                Movimientos
+              </button>
               
               <button
                 onClick={finalizarTurno}
@@ -206,7 +276,7 @@ function Game() {
               </button>
             </div>
 
-            {faseActual === 'refuerzos' && (
+            {faseActual === 'refuerzos' && !fasesCompletadas.refuerzos && (
               <PanelRefuerzos
                 partidaId={id}
                 jugadorId={user.id}
@@ -216,7 +286,14 @@ function Game() {
               />
             )}
 
-            {faseActual === 'ataques' && (
+            {faseActual === 'refuerzos' && fasesCompletadas.refuerzos && (
+              <div className="phase-panel completed">
+                <h3>Refuerzos Completados</h3>
+                <p>Ya completaste la fase de refuerzos en este turno.</p>
+              </div>
+            )}
+
+            {faseActual === 'ataques' && fasesCompletadas.refuerzos && (
               <PanelAtaques
                 partidaId={id}
                 jugadorId={user.id}
@@ -227,10 +304,24 @@ function Game() {
               />
             )}
 
-            {faseActual === 'movimientos' && (
+            {faseActual === 'ataques' && !fasesCompletadas.refuerzos && (
+              <div className="phase-panel blocked">
+                <h3>Fase de Ataques</h3>
+                <p>Debes completar la fase de refuerzos primero.</p>
+              </div>
+            )}
+
+            {faseActual === 'movimientos' && fasesCompletadas.refuerzos && (
               <div className="phase-panel not-implemented">
                 <h3>Panel de Movimientos</h3>
                 <p className="warning-text">no implementado aun</p>
+              </div>
+            )}
+
+            {faseActual === 'movimientos' && !fasesCompletadas.refuerzos && (
+              <div className="phase-panel blocked">
+                <h3>Fase de Movimientos</h3>
+                <p>Debes completar la fase de refuerzos primero.</p>
               </div>
             )}
           </div>

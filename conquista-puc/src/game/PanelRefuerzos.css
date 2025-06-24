@@ -1,121 +1,305 @@
-@import './basepartida.css';
-
-.crear-partida {
-  max-width: 400px;
-  margin: 2rem auto;
-  padding: 2rem;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background-color: #f9f9f9;
-}
-
-.crear-partida h2 {
-  margin-top: 0;
-}
-
-.error-message {
-  color: #d32f2f;
-  background-color: #ffebee;
-  padding: 0.5rem;
-  border-radius: 4px;
-  margin-bottom: 1rem;
-}
-
-.success-message {
-  color: #2e7d32;
-  background-color: #e8f5e8;
-  padding: 0.5rem;
-  border-radius: 4px;
-  margin-bottom: 1rem;
-}
-
-.form-group {
-  margin-bottom: 1rem;
-}
-
-.form-label {
-  display: block;
-  margin-bottom: 0.5rem;
-}
-
-.input-group {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.codigo-input {
-  flex: 1;
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.generar-button {
-  padding: 0.5rem 1rem;
-  background-color: #2196F3;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.crear-button {
-  width: 100%;
-  padding: 0.75rem;
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  font-size: 1rem;
-  cursor: pointer;
-}
-
-.crear-button:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
-}
-
-.info-section {
-  margin-top: 1rem;
-  font-size: 0.9rem;
-  color: #666;
-}
-
-.info-section ul {
-  padding-left: 1.5rem;
-}
-
 .panel-refuerzos {
-  background-color: rgba(17, 52, 105, 0.95);
-  border-radius: 8px;
   padding: 1.5rem;
-  margin: 1rem 0;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(10px);
-  color: #ffffff;
+  background-color: #fff;
+  border-radius: 8px;
+  border: 2px solid #007bff;
+  margin-bottom: 1rem;
 }
 
-.panel-title {
-  color: #ffd700;
+.panel-refuerzos h3 {
   margin-bottom: 1rem;
-  font-size: 1.5rem;
+  color: #007bff;
+}
+
+.no-turno-message {
+  padding: 1rem;
+  background-color: #f8d7da;
+  border-radius: 6px;
+  border: 1px solid #f5c6cb;
+  text-align: center;
+}
+
+.no-turno-message p {
+  color: #721c24;
+  margin: 0;
   font-weight: bold;
 }
 
-.refuerzos-info {
-  background-color: rgba(248, 249, 250, 0.1);
+.dado-info {
+  margin-bottom: 1rem;
   padding: 1rem;
   border-radius: 6px;
+  border: 1px solid;
+}
+
+.dado-activado {
+  background-color: #fff3cd;
+  border-color: #ffeeba;
+}
+
+.dado-activado h5,
+.dado-activado p {
+  color: #856404;
+}
+
+.dado-activado h5 {
+  margin: 0 0 0.5rem 0;
+}
+
+.dado-activado p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.dado-resultado-bueno {
+  background-color: #d4edda;
+  border-color: #c3e6cb;
+}
+
+.dado-resultado-malo {
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+}
+
+.dado-resultado-bueno h5,
+.dado-resultado-bueno p {
+  color: #155724;
+}
+
+.dado-resultado-malo h5,
+.dado-resultado-malo p {
+  color: #721c24;
+}
+
+.dado-resultado h5 {
+  margin: 0 0 0.5rem 0;
+}
+
+.dado-resultado p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.tropas-disponibles {
   margin-bottom: 1rem;
-  border-left: 4px solid #ffd700;
+  padding: 1rem;
+  background-color: #e9ecef;
+  border-radius: 6px;
 }
 
-.refuerzos-stats {
+.tropas-disponibles h4 {
+  margin-bottom: 0.75rem;
+  color: #495057;
+}
+
+.tropas-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 1rem;
+}
+
+.tropa-badge {
+  padding: 8px 12px;
+  color: white;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: bold;
+  border: 2px solid transparent;
+}
+
+.tropa-badge.asignada {
+  opacity: 0.5;
+  border: 2px dashed #fff;
+  cursor: pointer;
+}
+
+.tropa-badge.estudiante {
+  background-color: #6c757d;
+}
+
+.tropa-badge.ayudante {
+  background-color: #28a745;
+}
+
+.tropa-badge.profesor {
+  background-color: #ffc107;
+}
+
+.tropas-stats {
   font-size: 14px;
-  color: #cccccc;
+  color: #6c757d;
 }
 
-.facultades-section h4 {
+.facultades-asignacion {
+  margin-bottom: 1rem;
+}
+
+.facultades-asignacion h4 {
   margin-bottom: 0.5rem;
-  color: #ffffff;
+}
+
+.facultades-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 10px;
+}
+
+.facultad-card {
+  padding: 12px;
+  border: 2px solid #dee2e6;
+  border-radius: 6px;
+  background-color: #f8f9fa;
+}
+
+.facultad-card h5 {
+  margin: 0 0 8px 0;
+  font-size: 0.9rem;
+  color: #495057;
+}
+
+.tropas-asignadas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 8px;
+  min-height: 32px;
+  padding: 4px;
+  background-color: #fff;
+  border-radius: 4px;
+  border: 1px dashed #dee2e6;
+}
+
+.tropa-asignada {
+  padding: 4px 8px;
+  color: white;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: bold;
+}
+
+.tropa-asignada.estudiante {
+  background-color: #6c757d;
+}
+
+.tropa-asignada.ayudante {
+  background-color: #28a745;
+}
+
+.tropa-asignada.profesor {
+  background-color: #ffc107;
+}
+
+.tropas-asignadas .mensaje-vacio {
+  color: #6c757d;
+  font-size: 0.8rem;
+  font-style: italic;
+  align-self: center;
+}
+
+.botones-asignar {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.boton-asignar {
+  padding: 4px 8px;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  cursor: pointer;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+.boton-asignar:hover {
+  opacity: 1;
+}
+
+.boton-asignar.estudiante {
+  background-color: #6c757d;
+}
+
+.boton-asignar.ayudante {
+  background-color: #28a745;
+}
+
+.boton-asignar.profesor {
+  background-color: #ffc107;
+}
+
+.controles-principales {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.boton-principal {
+  padding: 12px 24px;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.boton-principal.aplicar {
+  background-color: #007bff;
+}
+
+.boton-principal.aplicar:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+.boton-principal.resetear {
+  background-color: #6c757d;
+}
+
+.boton-principal.resetear:hover:not(:disabled) {
+  background-color: #5a6268;
+}
+
+.mensaje-error {
+  padding: 10px;
+  background-color: #f8d7da;
+  color: #721c24;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.mensaje-exito {
+  padding: 10px;
+  background-color: #d4edda;
+  color: #155724;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .facultades-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .controles-principales {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .boton-principal {
+    width: 100%;
+    max-width: 300px;
+  }
 }
