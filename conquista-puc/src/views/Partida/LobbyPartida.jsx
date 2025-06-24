@@ -92,6 +92,45 @@ function LobbyPartida() {
     }
   };
 
+  // Función para cancelar la partida (solo creador)
+  const cancelarPartida = async () => {
+    setError('');
+    setSuccess('');
+    try {
+      const resultado = await partidasService.cancelarPartida(id);
+      if (resultado.success) {
+        setSuccess('La partida fue cancelada por el creador.');
+        // Esperar un segundo y redirigir al home o historial
+        setTimeout(() => {
+          navigate('/partida', { state: { mensaje: 'La partida fue cancelada.' } });
+        }, 1500);
+      } else {
+        setError(resultado.error || 'Error al cancelar la partida');
+      }
+    } catch (error) {
+      // No mostrar mensaje de error si ocurre una redirección
+    }
+  };
+
+  // Función para salir de la partida (jugador normal)
+  const salirDePartida = async () => {
+    setError('');
+    setSuccess('');
+    try {
+      const resultado = await partidasService.salirDePartida(id);
+      if (resultado.success) {
+        setSuccess('Has salido de la partida.');
+        setTimeout(() => {
+          navigate('/partida', { state: { mensaje: 'Has salido de la partida.' } });
+        }, 1500);
+      } else {
+        setError(resultado.error || 'Error al salir de la partida');
+      }
+    } catch (error) {
+      // No mostrar mensaje de error si ocurre una redirección
+    }
+  };
+
   const copiarCodigoSala = () => {
     if (partidaData?.partida?.codigo_sala) {
       navigator.clipboard.writeText(partidaData.partida.codigo_sala);
@@ -128,6 +167,10 @@ function LobbyPartida() {
   }
 
   const participantes = partidaData?.resumen_jugadores || [];
+  // Solo se considera que el usuario participa si está en estado 'jugando'
+  const yaParticipa = participantes.some(
+    p => Number(p.usuario_id) === Number(user?.id) && p.estado_en_partida === 'jugando'
+  );
   const esCreador = user && Number(partidaData?.partida?.creador_id) === Number(user.id);
   const puedeIniciar = esCreador && participantes.length >= 2 && partidaData?.partida?.estado === ESTADOS_PARTIDA.EN_ESPERA;
   
@@ -159,6 +202,20 @@ function LobbyPartida() {
       borderRadius: '8px',
       boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
     }}>
+      {partidaData?.partida?.estado === 'cancelada' && (
+        <div style={{
+          padding: '16px',
+          backgroundColor: '#f8d7da',
+          color: '#721c24',
+          borderRadius: '6px',
+          marginBottom: '1.5rem',
+          textAlign: 'center',
+          fontWeight: 'bold',
+          fontSize: '18px'
+        }}>
+          La partida fue cancelada por el creador.
+        </div>
+      )}
       <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
         <h1>Lobby de Partida</h1>
         <div style={{ 
@@ -326,6 +383,45 @@ function LobbyPartida() {
           </button>
         </div>
       )}
+
+      {/* Botones de cancelar/salir */}
+      <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
+        {esCreador && partidaData?.partida?.estado === ESTADOS_PARTIDA.EN_ESPERA && (
+          <button
+            onClick={cancelarPartida}
+            style={{
+              padding: '12px 28px',
+              backgroundColor: '#dc3545',
+              color: 'white',
+              border: 'none',
+              borderRadius: '6px',
+              fontWeight: 'bold',
+              fontSize: '16px',
+              cursor: 'pointer',
+              marginRight: '10px'
+            }}
+          >
+            Cancelar Partida
+          </button>
+        )}
+        {!esCreador && partidaData?.partida?.estado === ESTADOS_PARTIDA.EN_ESPERA && (
+          <button
+            onClick={salirDePartida}
+            style={{
+              padding: '12px 28px',
+              backgroundColor: '#ffc107',
+              color: '#212529',
+              border: 'none',
+              borderRadius: '6px',
+              fontWeight: 'bold',
+              fontSize: '16px',
+              cursor: 'pointer'
+            }}
+          >
+            Salir de la Partida
+          </button>
+        )}
+      </div>
 
       {!esCreador && participantes.length > 0 && (
         <div style={{ 

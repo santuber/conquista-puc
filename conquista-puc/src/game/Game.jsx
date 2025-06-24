@@ -175,12 +175,24 @@ function Game() {
     return (
       <div className="partida-container">
         <div className="game-container">
-          <h1>Partida Demo</h1>
-          <Board />
-          <div className="demo-cards">
-            <Card nombre="Facultad de Ingeniería" cantidad={3} />
-            <Card nombre="Facultad de Derecho" cantidad={2} />
-            <Card nombre="Facultad de Medicina" cantidad={5} />
+          <div style={{ textAlign: 'center', padding: '60px 20px' }}>
+            <h1>🎮 Conquista PUC</h1>
+            <p>Necesitas especificar un ID de partida para jugar.</p>
+            <button
+              onClick={() => navigate('/partida')}
+              style={{
+                padding: '12px 24px',
+                backgroundColor: '#007bff',
+                color: 'white',
+                border: 'none',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontWeight: 'bold',
+                marginTop: '20px'
+              }}
+            >
+              ← Volver al Gestor de Partidas
+            </button>
           </div>
         </div>
       </div>
