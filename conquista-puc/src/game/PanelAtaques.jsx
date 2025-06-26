@@ -8,7 +8,9 @@ function PanelAtaques({
   facultadesControladas,
   todasLasFacultades,
   esMiTurno, 
-  onAtaqueRealizado 
+  onAtaqueRealizado,
+  ataquesRealizados = 0,
+  maxAtaques = 5
 }) {
   const [facultadOrigen, setFacultadOrigen] = useState(null);
   const [facultadObjetivo, setFacultadObjetivo] = useState(null);
@@ -56,6 +58,11 @@ function PanelAtaques({
   };
 
   const realizarAtaque = async () => {
+    if (ataquesRealizados >= maxAtaques) {
+      setError(`Ya realizaste el máximo de ${maxAtaques} ataques en este turno`);
+      return;
+    }
+
     if (!facultadOrigen || !facultadObjetivo) {
       setError('Debes seleccionar tanto la facultad de origen como la de destino');
       return;
@@ -82,12 +89,13 @@ function PanelAtaques({
         jugadorId,
         facultadOrigen.id,
         facultadObjetivo.id,
-        tipoTropaSeleccionada
+        tipoTropaSeleccionada,
+        ataquesRealizados + 1
       );
 
       if (resultado.success) {
         setResultadoAtaque(resultado.data);
-        setSuccess('Ataque realizado exitosamente');
+        setSuccess(`Ataque ${ataquesRealizados + 1}/${maxAtaques} realizado exitosamente`);
         
         setTimeout(() => {
           setFacultadOrigen(null);
@@ -133,6 +141,23 @@ function PanelAtaques({
   return (
     <div className="panel-ataques">
       <h3>Panel de Ataques</h3>
+      
+      <div className="ataques-contador">
+        <h4>Ataques Realizados: {ataquesRealizados}/{maxAtaques}</h4>
+        <div className="ataques-progress">
+          {[...Array(maxAtaques)].map((_, i) => (
+            <div 
+              key={i} 
+              className={`ataque-slot ${i < ataquesRealizados ? 'usado' : 'disponible'}`}
+            >
+              {i < ataquesRealizados ? '⚔️' : '○'}
+            </div>
+          ))}
+        </div>
+        {ataquesRealizados >= maxAtaques && (
+          <p className="max-ataques-mensaje">Has usado todos tus ataques para este turno</p>
+        )}
+      </div>
 
       {resultadoAtaque && (
         <div className="resultado-ataque">
@@ -258,10 +283,10 @@ function PanelAtaques({
       <div className="controles">
         <button
           onClick={realizarAtaque}
-          disabled={loading || !facultadOrigen || !facultadObjetivo || !tipoTropaSeleccionada}
-          className={`btn-atacar ${loading || !facultadOrigen || !facultadObjetivo || !tipoTropaSeleccionada ? 'disabled' : 'enabled'}`}
+          disabled={loading || !facultadOrigen || !facultadObjetivo || !tipoTropaSeleccionada || ataquesRealizados >= maxAtaques}
+          className={`btn-atacar ${loading || !facultadOrigen || !facultadObjetivo || !tipoTropaSeleccionada || ataquesRealizados >= maxAtaques ? 'disabled' : 'enabled'}`}
         >
-          {loading ? 'Atacando...' : 'Realizar Ataque'}
+          {loading ? 'Atacando...' : ataquesRealizados >= maxAtaques ? `Máximo ${maxAtaques} ataques alcanzado` : `Realizar Ataque (${ataquesRealizados + 1}/${maxAtaques})`}
         </button>
         
         <button

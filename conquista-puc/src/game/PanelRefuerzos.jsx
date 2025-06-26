@@ -141,13 +141,12 @@ function PanelRefuerzos({
     setSuccess('');
 
     try {
-      //enviar informacion del dado al backend
       const resultado = await jugadasService.aplicarRefuerzos(
         partidaId, 
         jugadorId, 
         refuerzosParaBackend,
         lanzarDado,
-        dadoLanzado ? resultadoDado : null //enviar el resultado si se lanzo
+        dadoLanzado ? resultadoDado : null
       );
 
       if (resultado.success) {
@@ -179,11 +178,15 @@ function PanelRefuerzos({
   };
 
   const resetearRefuerzos = () => {
-    setTropasDisponibles([]);
-    setTropasAsignadas([]);
-    setResultadoDado(null);
-    setDadoLanzado(false);
-    handleDiceToggle(false);
+    if (dadoLanzado) {
+      actualizarTropasDisponibles(resultadoDado);
+    } else {
+      setTropasDisponibles([]);
+      setTropasAsignadas([]);
+      setResultadoDado(null);
+      setDadoLanzado(false);
+      handleDiceToggle(false);
+    }
     setError('');
     setSuccess('');
   };
