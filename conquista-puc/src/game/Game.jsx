@@ -4,6 +4,7 @@ import Board from './Board';
 import Card from './Card';
 import PanelRefuerzos from './PanelRefuerzos';
 import PanelAtaques from './PanelAtaques';
+import PanelMovimientos from './PanelMovimientos';
 import { AuthContext } from '../auth/AuthContext';
 import { partidasService } from '../services/partidasService';
 import { jugadasService } from '../services/jugadasService';
@@ -29,6 +30,9 @@ function Game() {
     refuerzos: false,
     accion: false
   });
+  const [accionRealizada, setAccionRealizada] = useState(null);
+  const [ataquesRealizados, setAtaquesRealizados] = useState(0);
+  const [maxAtaques] = useState(5);
 
   useEffect(() => {
     if (id) {
@@ -58,6 +62,8 @@ function Game() {
             refuerzos: false,
             accion: false
           });
+          setAccionRealizada(null);
+          setAtaquesRealizados(0);
         }
         
         setPartidaData(resultado.data);
@@ -94,6 +100,8 @@ function Game() {
           refuerzos: false,
           accion: false
         });
+        setAccionRealizada(null);
+        setAtaquesRealizados(0);
         await cargarEstadoPartida();
       } else {
         setError(resultado.error || 'Error al finalizar turno');
@@ -115,10 +123,12 @@ function Game() {
   };
 
   const onAtaqueRealizado = (resultado) => {
+    setAtaquesRealizados(prev => prev + 1);
     setFasesCompletadas(prev => ({
       ...prev,
       accion: true
     }));
+    setAccionRealizada('attack');
     cargarEstadoPartida();
   };
 
@@ -127,6 +137,7 @@ function Game() {
       ...prev,
       accion: true
     }));
+    setAccionRealizada('move');
     cargarEstadoPartida();
   };
 
@@ -141,8 +152,18 @@ function Game() {
       return;
     }
     
+    if (nuevaFase === 'ataques' && accionRealizada === 'move') {
+      setError('Ya realizaste un movimiento en este turno. Solo puedes atacar O mover, no ambos.');
+      return;
+    }
+    
     if (nuevaFase === 'movimientos' && !fasesCompletadas.refuerzos) {
       setError('Debes completar la fase de refuerzos primero');
+      return;
+    }
+    
+    if (nuevaFase === 'movimientos' && ataquesRealizados > 0) {
+      setError('Ya realizaste ataques en este turno. Solo puedes atacar O mover, no ambos.');
       return;
     }
     
@@ -265,18 +286,24 @@ function Game() {
               
               <button
                 onClick={() => cambiarFase('ataques')}
-                disabled={!fasesCompletadas.refuerzos}
-                className={`phase-button ${faseActual === 'ataques' ? 'active' : ''} ${!fasesCompletadas.refuerzos ? 'disabled' : ''}`}
+                disabled={!fasesCompletadas.refuerzos || accionRealizada === 'move'}
+                className={`phase-button ${faseActual === 'ataques' ? 'active' : ''} ${
+                  !fasesCompletadas.refuerzos || accionRealizada === 'move' ? 'disabled' : ''
+                } ${ataquesRealizados > 0 ? 'completed' : ''}`}
               >
-                Ataques
+                Ataques ({ataquesRealizados}/{maxAtaques}) {ataquesRealizados > 0 ? '⚔️' : ''}
+                {accionRealizada === 'move' ? ' (Bloqueado)' : ''}
               </button>
               
               <button
                 onClick={() => cambiarFase('movimientos')}
-                disabled={!fasesCompletadas.refuerzos}
-                className={`phase-button ${faseActual === 'movimientos' ? 'active' : ''} ${!fasesCompletadas.refuerzos ? 'disabled' : ''}`}
+                disabled={!fasesCompletadas.refuerzos || ataquesRealizados > 0}
+                className={`phase-button ${faseActual === 'movimientos' ? 'active' : ''} ${
+                  !fasesCompletadas.refuerzos || ataquesRealizados > 0 ? 'disabled' : ''
+                } ${accionRealizada === 'move' ? 'completed' : ''}`}
               >
-                Movimientos
+                Movimientos {accionRealizada === 'move' ? '✓' : ''}
+                {ataquesRealizados > 0 ? ' (Bloqueado)' : ''}
               </button>
               
               <button
@@ -305,7 +332,7 @@ function Game() {
               </div>
             )}
 
-            {faseActual === 'ataques' && fasesCompletadas.refuerzos && (
+            {faseActual === 'ataques' && fasesCompletadas.refuerzos && accionRealizada !== 'move' && (
               <PanelAtaques
                 partidaId={id}
                 jugadorId={user.id}
@@ -313,6 +340,8 @@ function Game() {
                 todasLasFacultades={partidaData?.facultades}
                 esMiTurno={esMiTurno}
                 onAtaqueRealizado={onAtaqueRealizado}
+                ataquesRealizados={ataquesRealizados}
+                maxAtaques={maxAtaques}
               />
             )}
 
@@ -323,17 +352,42 @@ function Game() {
               </div>
             )}
 
-            {faseActual === 'movimientos' && fasesCompletadas.refuerzos && (
-              <div className="phase-panel not-implemented">
-                <h3>Panel de Movimientos</h3>
-                <p className="warning-text">no implementado aun</p>
+            {faseActual === 'ataques' && accionRealizada === 'move' && (
+              <div className="phase-panel blocked">
+                <h3>Fase de Ataques</h3>
+                <p>Ya realizaste un movimiento en este turno. Solo puedes atacar O mover, no ambos.</p>
               </div>
+            )}
+
+            {faseActual === 'movimientos' && fasesCompletadas.refuerzos && ataquesRealizados === 0 && accionRealizada !== 'move' && (
+              <PanelMovimientos
+                partidaId={id}
+                jugadorId={user.id}
+                facultadesControladas={facultadesControladas}
+                esMiTurno={esMiTurno}
+                onMovimientoRealizado={onMovimientoRealizado}
+                accionYaRealizada={accionRealizada === 'move'}
+              />
             )}
 
             {faseActual === 'movimientos' && !fasesCompletadas.refuerzos && (
               <div className="phase-panel blocked">
                 <h3>Fase de Movimientos</h3>
                 <p>Debes completar la fase de refuerzos primero.</p>
+              </div>
+            )}
+
+            {faseActual === 'movimientos' && ataquesRealizados > 0 && (
+              <div className="phase-panel blocked">
+                <h3>Fase de Movimientos</h3>
+                <p>Ya realizaste {ataquesRealizados} ataque{ataquesRealizados > 1 ? 's' : ''} en este turno. Solo puedes atacar O mover, no ambos.</p>
+              </div>
+            )}
+
+            {faseActual === 'movimientos' && accionRealizada === 'move' && (
+              <div className="phase-panel completed">
+                <h3>Movimiento Completado</h3>
+                <p>Ya realizaste un movimiento en este turno.</p>
               </div>
             )}
           </div>

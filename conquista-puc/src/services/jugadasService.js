@@ -69,16 +69,16 @@ export const jugadasService = {
     }
   },
 
-  async realizarAtaque(id_juego, id_jugador, facultad_origen_id, facultad_objetivo, tipo_tropa = null) {
+  async realizarAtaque(id_juego, id_jugador, facultad_origen_id, facultad_objetivo, tipo_tropa = null, numero_ataque = 1) {
     try {
       const payload = {
         id_juego,
         id_jugador,
         facultad_origen_id,
-        facultad_objetivo
+        facultad_objetivo,
+        numero_ataque
       };
       
-      // Añadir tipo de tropa si se especifica
       if (tipo_tropa) {
         payload.tipo_tropa = tipo_tropa;
       }
@@ -99,15 +99,21 @@ export const jugadasService = {
     }
   },
 
-  async moverTropas(id_juego, id_jugador, facultad_origen_id, facultad_destino_id, cantidad) {
+  async moverTropas(id_juego, id_jugador, facultad_origen_id, facultad_destino_id, cantidad, tropas_especificas = null) {
     try {
-      const response = await apiClient.post('/jugadas/move', {
+      const payload = {
         id_juego,
         id_jugador,
         facultad_origen_id,
         facultad_destino_id,
         cantidad
-      });
+      };
+
+      if (tropas_especificas) {
+        payload.tropas_especificas = tropas_especificas;
+      }
+
+      const response = await apiClient.post('/jugadas/move', payload);
       
       return {
         success: true,

@@ -1,0 +1,484 @@
+.panel-movimientos {
+  background-color: #fff;
+  border-radius: 8px;
+  border: 2px solid #28a745;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.panel-movimientos.disabled {
+  background-color: #d4edda;
+  border-color: #c3e6cb;
+  text-align: center;
+  color: #155724;
+  font-weight: bold;
+}
+
+.panel-movimientos h3 {
+  margin-bottom: 1rem;
+  color: #28a745;
+}
+
+.info-text {
+  color: #6c757d;
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+
+.no-options {
+  text-align: center;
+  padding: 2rem;
+  color: #6c757d;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+  border: 1px dashed #dee2e6;
+}
+
+.movimiento-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.form-group label {
+  font-weight: 600;
+  color: #343a40;
+  font-size: 1rem;
+}
+
+.facultades-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.facultad-card {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border: 2px solid #dee2e6;
+  border-radius: 8px;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.facultad-card:hover {
+  border-color: #28a745;
+  box-shadow: 0 2px 8px rgba(40, 167, 69, 0.2);
+  transform: translateY(-1px);
+}
+
+.facultad-card.selected {
+  border-color: #28a745;
+  background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+.facultad-name {
+  font-weight: 600;
+  color: #343a40;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+  line-height: 1.3;
+}
+
+.facultad-tropas {
+  color: #495057;
+  font-size: 0.9rem;
+  margin-bottom: 0.25rem;
+}
+
+.facultad-movibles {
+  color: #28a745;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.facultad-campus {
+  color: #6c757d;
+  font-size: 0.85rem;
+  font-style: italic;
+}
+
+.cantidad-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.cantidad-input {
+  width: 100px;
+  padding: 0.5rem;
+  border: 2px solid #dee2e6;
+  border-radius: 4px;
+  font-size: 1rem;
+  text-align: center;
+}
+
+.cantidad-input:focus {
+  outline: none;
+  border-color: #28a745;
+  box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+}
+
+.cantidad-info {
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.action-button {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 1rem;
+  min-width: 120px;
+}
+
+.move-button.enabled {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: white;
+}
+
+.move-button.enabled:hover {
+  background: linear-gradient(135deg, #218838 0%, #1e7e34 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+.move-button.disabled {
+  background-color: #6c757d;
+  color: #fff;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.reset-button {
+  background-color: #6c757d;
+  color: white;
+}
+
+.reset-button:hover {
+  background-color: #5a6268;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(108, 117, 125, 0.3);
+}
+
+.message {
+  padding: 1rem;
+  border-radius: 6px;
+  font-weight: 500;
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.error-message {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.success-message {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.warning-text {
+  color: #856404;
+  background-color: #fff3cd;
+  border: 1px solid #ffeaa7;
+  padding: 0.75rem;
+  border-radius: 4px;
+  text-align: center;
+  font-weight: 500;
+}
+
+.resultado-movimiento {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-top: 1.5rem;
+  color: white;
+  text-align: center;
+}
+
+.resultado-movimiento h4 {
+  margin-bottom: 1rem;
+  color: white;
+}
+
+.resultado-details {
+  text-align: left;
+}
+
+.resultado-details p {
+  margin-bottom: 0.5rem;
+}
+
+.tropas-movidas {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.tropas-movidas ul {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0 0 0;
+}
+
+.tropas-movidas li {
+  background-color: rgba(255, 255, 255, 0.1);
+  margin: 0.25rem 0;
+  padding: 0.5rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+/* Estilos específicos para selección de tropas */
+.tropas-selection {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.tropas-disponibles {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.tropas-disponibles h4 {
+  margin: 0 0 0.5rem 0;
+  color: #495057;
+  font-size: 0.9rem;
+}
+
+.tropas-info {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.tropa-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: #6c757d;
+}
+
+.tropa-icon {
+  font-size: 1.2rem;
+  width: 24px;
+  text-align: center;
+}
+
+.tropa-icon.estudiante {
+  filter: hue-rotate(0deg);
+}
+
+.tropa-icon.ayudante {
+  filter: hue-rotate(60deg);
+}
+
+.tropa-icon.profesor {
+  filter: hue-rotate(120deg);
+}
+
+.tropas-seleccion {
+  background: #ffffff;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 2px solid #007bff;
+}
+
+.tropas-seleccion h4 {
+  margin: 0 0 1rem 0;
+  color: #007bff;
+  font-size: 1rem;
+}
+
+.tropa-selector {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.tropa-selector:last-of-type {
+  border-bottom: none;
+}
+
+.tropa-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.tropa-name {
+  font-weight: 500;
+  color: #495057;
+}
+
+.cantidad-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.quantity-btn {
+  width: 32px;
+  height: 32px;
+  border: 1px solid #dee2e6;
+  background: #ffffff;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.2s ease;
+}
+
+.quantity-btn:hover:not(:disabled) {
+  background: #f8f9fa;
+  border-color: #007bff;
+}
+
+.quantity-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #e9ecef;
+}
+
+.quantity-btn.minus {
+  color: #dc3545;
+}
+
+.quantity-btn.plus {
+  color: #28a745;
+}
+
+.quantity-display {
+  min-width: 32px;
+  text-align: center;
+  font-weight: bold;
+  padding: 0.25rem 0.5rem;
+  background: #f8f9fa;
+  border-radius: 4px;
+  border: 1px solid #dee2e6;
+}
+
+.max-info {
+  font-size: 0.8rem;
+  color: #6c757d;
+  white-space: nowrap;
+}
+
+.total-seleccionadas {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background: #e3f2fd;
+  border-radius: 6px;
+  border-left: 4px solid #2196f3;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.total-seleccionadas strong {
+  color: #1976d2;
+  font-size: 1rem;
+}
+
+.total-limit {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+/* Mejoras en el resultado del movimiento */
+.tropas-movidas ul {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0;
+}
+
+.tropas-movidas li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.tropas-movidas li:last-child {
+  border-bottom: none;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .facultades-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .actions {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .action-button {
+    width: 100%;
+    max-width: 200px;
+  }
+  
+  .cantidad-controls {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .tropas-selection {
+    gap: 0.75rem;
+  }
+  
+  .tropas-info {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .tropa-selector {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+  
+  .cantidad-controls {
+    justify-content: center;
+  }
+  
+  .total-seleccionadas {
+    text-align: center;
+  }
+}
