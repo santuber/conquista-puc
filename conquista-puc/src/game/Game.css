@@ -213,6 +213,9 @@
   width: 20px;
   height: 20px;
   border-radius: 50%;
+  margin-right: 10px;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 .player-name {
@@ -254,4 +257,34 @@
   flex-wrap: wrap;
   margin-top: 2rem;
   gap: 1rem;
+}
+
+/* Estilos para el mensaje de ID de partida requerido */
+.no-game-id-container {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.no-game-id-title {
+  margin-bottom: 16px;
+}
+
+.no-game-id-message {
+  margin-bottom: 20px;
+}
+
+.back-to-manager-button {
+  padding: 12px 24px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  margin-top: 20px;
+  transition: background-color 0.2s;
+}
+
+.back-to-manager-button:hover {
+  background-color: #0056b3;
 }

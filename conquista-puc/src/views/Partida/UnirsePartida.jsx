@@ -35,6 +35,19 @@ function UnirsePartida() {
           const partida = estadoResultado.data.partida;
           const participantes = estadoResultado.data.resumen_jugadores || [];
           
+          // DEBUG: Ver estructura de datos
+          console.log('=== DEBUG UNIRSE PARTIDA ===');
+          console.log('Partida completa:', estadoResultado.data);
+          console.log('Participantes:', participantes);
+          console.log('User ID actual:', user?.id);
+          console.log('¿Usuario está en participantes?', participantes.some(p => p.usuario_id === user?.id));
+          participantes.forEach((p, index) => {
+            console.log(`Participante ${index + 1}:`, p);
+            if (p.usuario_id === user?.id) {
+              console.log('✓ ESTE ES EL USUARIO ACTUAL - Estado:', p.estado_en_partida);
+            }
+          });
+          
           setPartidaEncontrada({
             id: partida.id,
             codigo_sala: partida.codigo_sala,
@@ -159,9 +172,7 @@ function UnirsePartida() {
             <div className="unirse-action">
               {partidaEncontrada.estado === 'en_espera' && 
                partidaEncontrada.jugadores_actuales < partidaEncontrada.jugadores_maximo &&
-               !partidaEncontrada.participantes.some(
-                 p => p.usuario_id === user?.id && p.estado_en_partida === 'jugando'
-               ) ? (
+               !partidaEncontrada.participantes.some(p => p.usuario_id === user?.id) ? (
                 <button 
                   onClick={unirseAPartida}
                   disabled={loading}
@@ -171,9 +182,7 @@ function UnirsePartida() {
                 </button>
               ) : (
                 <div className="unirse-status">
-                  {partidaEncontrada.participantes.some(
-                    p => p.usuario_id === user?.id && p.estado_en_partida === 'jugando'
-                  ) 
+                  {partidaEncontrada.participantes.some(p => p.usuario_id === user?.id) 
                     ? 'Ya estas en esta partida' 
                     : partidaEncontrada.estado !== 'en_espera'
                     ? 'La partida ya ha comenzado'

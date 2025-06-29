@@ -224,21 +224,12 @@ function Game() {
     return (
       <div className="partida-container">
         <div className="game-container">
-          <div style={{ textAlign: 'center', padding: '60px 20px' }}>
-            <h1>🎮 Conquista PUC</h1>
-            <p>Necesitas especificar un ID de partida para jugar.</p>
+          <div className="no-game-id-container">
+            <h1 className="no-game-id-title">🎮 Conquista PUC</h1>
+            <p className="no-game-id-message">Necesitas especificar un ID de partida para jugar.</p>
             <button
               onClick={() => navigate('/partida')}
-              style={{
-                padding: '12px 24px',
-                backgroundColor: '#007bff',
-                color: 'white',
-                border: 'none',
-                borderRadius: '6px',
-                cursor: 'pointer',
-                fontWeight: 'bold',
-                marginTop: '20px'
-              }}
+              className="back-to-manager-button"
             >
               ← Volver al Gestor de Partidas
             </button>

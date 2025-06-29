@@ -4,6 +4,7 @@ import { useAuth } from '../../auth/AuthContext';
 import { partidasService } from '../../services/partidasService';
 import { ESTADOS_PARTIDA } from '../../constants/gameConstants';
 import './basepartida.css';
+import './gestorpartidas.css';
 
 function GestorPartidas() {
   const { user } = useAuth();
@@ -22,7 +23,7 @@ function GestorPartidas() {
       if (vistaActual === 'activas') {
         cargarPartidas();
       }
-    }, 10000);
+    }, 20000);
     return () => clearInterval(interval);
   }, [user?.id, vistaActual]);
 
@@ -34,33 +35,57 @@ function GestorPartidas() {
 
     setLoading(true);
     try {
-      // Por ahora usamos todas las partidas y filtramos
-      // Más adelante se puede implementar el endpoint específico
       const resultado = await partidasService.obtenerPartidas();
       
       if (resultado.success) {
-        // Filtrar partidas donde el usuario participa (esto se debería hacer en el backend)
         const todasPartidas = resultado.data;
         
-        const activas = todasPartidas.filter(p => 
-          (p.estado === ESTADOS_PARTIDA.EN_ESPERA || p.estado === ESTADOS_PARTIDA.EN_JUEGO) &&
-          (p.creador_id === user.id) // Por ahora solo partidas creadas por el usuario
-        );
+        // Función para verificar si el usuario participa en una partida
+        const usuarioParticipa = (partida) => {
+          // Es el creador
+          if (partida.creador_id === user.id) {
+            return true;
+          }
+          
+          // Verificar en participantes (ajusta según la estructura real que viste)
+          if (partida.participantes && Array.isArray(partida.participantes)) {
+            return partida.participantes.some(part => 
+              part.usuario_id === user.id || part.id === user.id
+            );
+          }
+          
+          // Verificar en resumen_jugadores (si existe)
+          if (partida.resumen_jugadores && Array.isArray(partida.resumen_jugadores)) {
+            return partida.resumen_jugadores.some(jugador => 
+              jugador.usuario_id === user.id || jugador.id === user.id
+            );
+          }
+          
+          return false;
+        };
         
-        const finalizadas = todasPartidas.filter(p => 
-          p.estado === ESTADOS_PARTIDA.FINALIZADA &&
-          (p.creador_id === user.id) // Por ahora solo partidas creadas por el usuario
-        );
+        const activas = todasPartidas.filter(p => {
+          const esActiva = p.estado === ESTADOS_PARTIDA.EN_ESPERA || p.estado === ESTADOS_PARTIDA.EN_JUEGO;
+          const participa = usuarioParticipa(p);
+          return esActiva && participa;
+        });
+        
+        const finalizadas = todasPartidas.filter(p => {
+          const esFinalizada = p.estado === ESTADOS_PARTIDA.FINALIZADA;
+          const participa = usuarioParticipa(p);
+          return esFinalizada && participa;
+        });
 
         setPartidasActivas(activas);
         setPartidasFinalizadas(finalizadas);
         setError('');
       } else {
+        console.error('Error del backend:', resultado.error);
         setError(resultado.error || 'Error al cargar partidas');
       }
     } catch (error) {
+      console.error('Error inesperado:', error);
       setError('Error inesperado al cargar partidas');
-      console.error('Error loading partidas:', error);
     } finally {
       setLoading(false);
     }
@@ -105,12 +130,7 @@ function GestorPartidas() {
   if (loading) {
     return (
       <div className="partida-container">
-        <div style={{ 
-          maxWidth: '1200px', 
-          margin: '2rem auto', 
-          padding: '2rem',
-          textAlign: 'center'
-        }}>
+        <div className="gestor-loading-container">
           <h1>Cargando tus partidas...</h1>
         </div>
       </div>
@@ -119,107 +139,46 @@ function GestorPartidas() {
 
   return (
     <div className="partida-container">
-      <div style={{ 
-        maxWidth: '1200px', 
-        margin: '2rem auto', 
-        padding: '2rem',
-        backgroundColor: 'rgba(248, 249, 250, 0.95)',
-        borderRadius: '8px',
-        boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
-      }}>
-        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+      <div className="gestor-main-container">
+        <div className="gestor-header">
           <h1>Gestor de Partidas</h1>
           <p>Administra tus partidas activas y revisa tu historial</p>
         </div>
 
         {/* Navegación de pestañas */}
-        <div style={{ 
-          display: 'flex', 
-          gap: '10px', 
-          marginBottom: '2rem',
-          justifyContent: 'center'
-        }}>
+        <div className="gestor-tabs">
           <button
             onClick={() => setVistaActual('activas')}
-            style={{
-              padding: '12px 24px',
-              backgroundColor: vistaActual === 'activas' ? '#007bff' : '#6c757d',
-              color: 'white',
-              border: 'none',
-              borderRadius: '6px',
-              cursor: 'pointer',
-              fontWeight: 'bold'
-            }}
+            className={`gestor-tab-button ${vistaActual === 'activas' ? 'active' : 'inactive'}`}
           >
             Partidas Activas ({partidasActivas.length})
           </button>
           <button
             onClick={() => setVistaActual('historial')}
-            style={{
-              padding: '12px 24px',
-              backgroundColor: vistaActual === 'historial' ? '#007bff' : '#6c757d',
-              color: 'white',
-              border: 'none',
-              borderRadius: '6px',
-              cursor: 'pointer',
-              fontWeight: 'bold'
-            }}
+            className={`gestor-tab-button ${vistaActual === 'historial' ? 'active' : 'inactive'}`}
           >
             Historial ({partidasFinalizadas.length})
           </button>
         </div>
 
         {/* Acciones rápidas */}
-        <div style={{ 
-          display: 'flex', 
-          gap: '15px', 
-          marginBottom: '3rem',
-          justifyContent: 'center',
-          flexWrap: 'wrap'
-        }}>
+        <div className="gestor-quick-actions">
           <button
             onClick={() => navigate('/crear-partida')}
-            style={{
-              padding: '15px 30px',
-              backgroundColor: '#28a745',
-              color: 'white',
-              border: 'none',
-              borderRadius: '6px',
-              cursor: 'pointer',
-              fontWeight: 'bold',
-              fontSize: '16px'
-            }}
+            className="gestor-action-button create"
           >
             ➕ Crear Nueva Partida
           </button>
           <button
             onClick={() => navigate('/unirse-partida')}
-            style={{
-              padding: '15px 30px',
-              backgroundColor: '#17a2b8',
-              color: 'white',
-              border: 'none',
-              borderRadius: '6px',
-              cursor: 'pointer',
-              fontWeight: 'bold',
-              fontSize: '16px'
-            }}
+            className="gestor-action-button search"
           >
             🔍 Buscar Partida
           </button>
           <button
             onClick={cargarPartidas}
             disabled={loading}
-            style={{
-              padding: '15px 30px',
-              backgroundColor: loading ? '#6c757d' : '#ffc107',
-              color: 'white',
-              border: 'none',
-              borderRadius: '6px',
-              cursor: loading ? 'not-allowed' : 'pointer',
-              fontWeight: 'bold',
-              fontSize: '16px'
-            }}
+            className={`gestor-action-button refresh ${loading ? 'loading' : ''}`}
           >
             🔄 {loading ? 'Actualizando...' : 'Actualizar'}
           </button>
@@ -230,50 +189,25 @@ function GestorPartidas() {
           <div>
             <h2>Partidas Activas</h2>
             {partidasActivas.length === 0 ? (
-              <div style={{ 
-                textAlign: 'center', 
-                padding: '60px 20px',
-                backgroundColor: '#fff',
-                borderRadius: '8px',
-                border: '2px dashed #dee2e6'
-              }}>
+              <div className="gestor-empty-state">
                 <h3>📝 No tienes partidas activas</h3>
                 <p>Crea una nueva partida o únete a una existente para comenzar a jugar</p>
               </div>
             ) : (
-              <div style={{ 
-                display: 'grid', 
-                gap: '20px', 
-                gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))' 
-              }}>
+              <div className="gestor-partidas-grid">
                 {partidasActivas.map((partida) => (
-                  <div key={partida.id} style={{
-                    border: '1px solid #dee2e6',
-                    borderRadius: '8px',
-                    padding: '20px',
-                    backgroundColor: '#fff',
-                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-                  }}>
-                    <div style={{ 
-                      display: 'flex', 
-                      justifyContent: 'space-between', 
-                      alignItems: 'center',
-                      marginBottom: '15px'
-                    }}>
-                      <h3 style={{ margin: 0 }}>🎮 {partida.codigo_sala}</h3>
-                      <span style={{
-                        padding: '4px 12px',
-                        borderRadius: '20px',
-                        fontSize: '12px',
-                        fontWeight: 'bold',
-                        color: 'white',
-                        backgroundColor: getEstadoColor(partida.estado)
-                      }}>
+                  <div key={partida.id} className="gestor-partida-card">
+                    <div className="gestor-partida-header">
+                      <h3>🎮 {partida.codigo_sala}</h3>
+                      <span 
+                        className="gestor-estado-badge"
+                        style={{ backgroundColor: getEstadoColor(partida.estado) }}
+                      >
                         {getEstadoTexto(partida.estado)}
                       </span>
                     </div>
                     
-                    <div style={{ marginBottom: '15px', fontSize: '14px', color: '#6c757d' }}>
+                    <div className="gestor-partida-info">
                       <p><strong>Jugadores:</strong> {partida.cantidad_jugadores || 0}/4</p>
                       <p><strong>Creada:</strong> {formatearFecha(partida.fecha_creacion)}</p>
                       {partida.estado === ESTADOS_PARTIDA.EN_JUEGO && partida.jugador_actual && (
@@ -283,17 +217,7 @@ function GestorPartidas() {
 
                     <button
                       onClick={() => unirseAPartida(partida)}
-                      style={{
-                        width: '100%',
-                        padding: '12px',
-                        backgroundColor: partida.estado === ESTADOS_PARTIDA.EN_ESPERA ? '#007bff' : '#28a745',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '6px',
-                        cursor: 'pointer',
-                        fontWeight: 'bold',
-                        fontSize: '14px'
-                      }}
+                      className={`gestor-partida-button ${partida.estado === ESTADOS_PARTIDA.EN_ESPERA ? 'espera' : 'juego'}`}
                     >
                       {partida.estado === ESTADOS_PARTIDA.EN_ESPERA ? '🚪 Ir al Lobby' : '⚔️ Continuar Juego'}
                     </button>
@@ -309,50 +233,22 @@ function GestorPartidas() {
           <div>
             <h2>Historial de Partidas</h2>
             {partidasFinalizadas.length === 0 ? (
-              <div style={{ 
-                textAlign: 'center', 
-                padding: '60px 20px',
-                backgroundColor: '#fff',
-                borderRadius: '8px',
-                border: '2px dashed #dee2e6'
-              }}>
+              <div className="gestor-empty-state">
                 <h3>📚 No tienes partidas finalizadas</h3>
                 <p>Cuando completes partidas, aparecerán aquí con sus resultados</p>
               </div>
             ) : (
-              <div style={{ 
-                display: 'grid', 
-                gap: '20px', 
-                gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))' 
-              }}>
+              <div className="gestor-partidas-grid">
                 {partidasFinalizadas.map((partida) => (
-                  <div key={partida.id} style={{
-                    border: '1px solid #dee2e6',
-                    borderRadius: '8px',
-                    padding: '20px',
-                    backgroundColor: '#f8f9fa',
-                    opacity: 0.8
-                  }}>
-                    <div style={{ 
-                      display: 'flex', 
-                      justifyContent: 'space-between', 
-                      alignItems: 'center',
-                      marginBottom: '15px'
-                    }}>
-                      <h3 style={{ margin: 0 }}>🏆 {partida.codigo_sala}</h3>
-                      <span style={{
-                        padding: '4px 12px',
-                        borderRadius: '20px',
-                        fontSize: '12px',
-                        fontWeight: 'bold',
-                        color: 'white',
-                        backgroundColor: '#6c757d'
-                      }}>
+                  <div key={partida.id} className="gestor-partida-card finalizada">
+                    <div className="gestor-partida-header">
+                      <h3>🏆 {partida.codigo_sala}</h3>
+                      <span className="gestor-estado-badge" style={{ backgroundColor: '#6c757d' }}>
                         Finalizada
                       </span>
                     </div>
                     
-                    <div style={{ marginBottom: '15px', fontSize: '14px', color: '#6c757d' }}>
+                    <div className="gestor-partida-info">
                       <p><strong>Jugadores:</strong> {partida.cantidad_jugadores || 0}</p>
                       <p><strong>Iniciada:</strong> {formatearFecha(partida.fecha_creacion)}</p>
                       {partida.fecha_finalizacion && (
@@ -365,17 +261,7 @@ function GestorPartidas() {
 
                     <button
                       onClick={() => console.log('Ver detalles:', partida)}
-                      style={{
-                        width: '100%',
-                        padding: '12px',
-                        backgroundColor: '#6c757d',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '6px',
-                        cursor: 'pointer',
-                        fontWeight: 'bold',
-                        fontSize: '14px'
-                      }}
+                      className="gestor-partida-button detalles"
                     >
                       📊 Ver Detalles
                     </button>
@@ -387,15 +273,7 @@ function GestorPartidas() {
         )}
 
         {error && (
-          <div style={{
-            padding: '15px',
-            backgroundColor: '#f8d7da',
-            color: '#721c24',
-            borderRadius: '6px',
-            marginTop: '20px',
-            textAlign: 'center',
-            fontWeight: 'bold'
-          }}>
+          <div className="gestor-error-message">
             ⚠️ {error}
           </div>
         )}

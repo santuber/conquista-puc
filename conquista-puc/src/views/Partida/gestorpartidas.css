@@ -1,0 +1,171 @@
+/* Contenedor principal del gestor */
+.gestor-loading-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.gestor-main-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: rgba(248, 249, 250, 0.95);
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.gestor-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+/* Navegación de pestañas */
+.gestor-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 2rem;
+  justify-content: center;
+}
+
+.gestor-tab-button {
+  padding: 12px 24px;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.gestor-tab-button.active {
+  background-color: #007bff;
+}
+
+.gestor-tab-button.inactive {
+  background-color: #6c757d;
+}
+
+/* Acciones rápidas */
+.gestor-quick-actions {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 3rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.gestor-action-button {
+  padding: 15px 30px;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.gestor-action-button.create {
+  background-color: #28a745;
+}
+
+.gestor-action-button.search {
+  background-color: #17a2b8;
+}
+
+.gestor-action-button.refresh {
+  background-color: #ffc107;
+}
+
+.gestor-action-button.refresh.loading {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+/* Estados vacíos */
+.gestor-empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  border: 2px dashed #dee2e6;
+}
+
+/* Grid de partidas */
+.gestor-partidas-grid {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+}
+
+/* Tarjetas de partida */
+.gestor-partida-card {
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.gestor-partida-card.finalizada {
+  background-color: #f8f9fa;
+  opacity: 0.8;
+}
+
+.gestor-partida-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.gestor-partida-header h3 {
+  margin: 0;
+}
+
+.gestor-estado-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: bold;
+  color: white;
+}
+
+.gestor-partida-info {
+  margin-bottom: 15px;
+  font-size: 14px;
+  color: #6c757d;
+}
+
+.gestor-partida-button {
+  width: 100%;
+  padding: 12px;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.gestor-partida-button.espera {
+  background-color: #007bff;
+}
+
+.gestor-partida-button.juego {
+  background-color: #28a745;
+}
+
+.gestor-partida-button.detalles {
+  background-color: #6c757d;
+}
+
+/* Mensaje de error */
+.gestor-error-message {
+  padding: 15px;
+  background-color: #f8d7da;
+  color: #721c24;
+  border-radius: 6px;
+  margin-top: 20px;
+  text-align: center;
+  font-weight: bold;
+}
