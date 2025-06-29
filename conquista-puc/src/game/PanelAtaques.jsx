@@ -41,11 +41,55 @@ function PanelAtaques({
     return labels[tipo] || tipo;
   };
 
+  const MATRIZ_ADYACENCIA = {
+    // Lo Contador
+    1: [4,5,7],
+    // Oriente
+    2: [14,21],
+    // San Joaquín
+    3: [6,10,13,15,16,17,19,20,23],
+    6: [3,10,13,15,19],
+    10: [3,6,13,15,20],
+    13: [3,6,10,15,20],
+    15: [3,6,10,13,20],
+    16: [17,23],
+    17: [16,23],
+    19: [3,6],
+    20: [3,10,13,15],
+    23: [16,17],
+    // Casa Central
+    4: [1,5,7,11,12,14,21,22],
+    5: [1,4,7,12],
+    7: [1,4,5,12],
+    11: [4,12,14,21],
+    12: [4,5,7,11,14,22],
+    14: [2,4,11,12,21],
+    21: [2,4,11,14],
+    22: [4,12],
+    // Villarrica
+    8: [9,18],
+    9: [8,18],
+    18: [8,9],
+  };
+
   const getFacultadesEnemigas = () => {
+    if (!facultadOrigen) {
+      // No hay facultad origen: mostrar todas las enemigas
+      return todasLasFacultades.filter(facultad => 
+        facultad.controlada_por?.usuario_id !== jugadorId &&
+        facultad.tropas &&
+        Object.values(facultad.tropas).reduce((total, count) => total + count, 0) > 0
+      );
+    }
+
+    // Hay facultad origen: mostrar solo adyacentes
+    const adyacentesIds = MATRIZ_ADYACENCIA[facultadOrigen.id] || [];
+
     return todasLasFacultades.filter(facultad => 
       facultad.controlada_por?.usuario_id !== jugadorId &&
       facultad.tropas &&
-      Object.values(facultad.tropas).reduce((total, count) => total + count, 0) > 0
+      Object.values(facultad.tropas).reduce((total, count) => total + count, 0) > 0 &&
+      adyacentesIds.includes(facultad.id)
     );
   };
 
@@ -198,8 +242,18 @@ function PanelAtaques({
               <div 
                 key={facultad.id}
                 className={`facultad-card ${facultadOrigen?.id === facultad.id ? 'selected' : ''}`}
-                onClick={() => setFacultadOrigen(facultad)}
-              >
+                onClick={() => {
+                  setError('');
+                  if (facultadOrigen?.id === facultad.id) {
+                    setFacultadOrigen(null);
+                    setFacultadObjetivo(null);
+                    setTipoTropaSeleccionada(null);
+                  } else {
+                    setFacultadOrigen(facultad);
+                    setFacultadObjetivo(null);
+                    setTipoTropaSeleccionada(null);
+                  }
+                }}>
                 <div className="facultad-nombre">{facultad.nombre}</div>
                 <div className="facultad-tropas">
                   Tropas: {facultad.tropas_totales || 
@@ -215,14 +269,32 @@ function PanelAtaques({
 
         <div className="seccion-objetivo">
           <h4>2. Selecciona facultad enemiga</h4>
-          <p className="info">Debe ser adyacente a tu facultad</p>
+          {!facultadOrigen && (
+            <p className="info">
+              Mostrando todas las facultades enemigas. Selecciona tu facultad atacante para filtrar las adyacentes.
+            </p>
+          )}
+          {facultadOrigen && (
+            <p className="info">
+              Mostrando solo facultades enemigas <strong>adyacentes a {facultadOrigen.nombre}</strong>.
+            </p>
+          )}
           <div className="facultades-grid">
             {facultadesEnemigas.map((facultad) => (
               <div 
                 key={facultad.id}
                 className={`facultad-card enemiga ${facultadObjetivo?.id === facultad.id ? 'selected' : ''}`}
-                onClick={() => setFacultadObjetivo(facultad)}
-              >
+                onClick={() => {
+                  if (!facultadOrigen) {
+                    setError('Debes seleccionar una facultad de origen primero');
+                  } else if (facultadObjetivo?.id === facultad.id) {
+                    setFacultadObjetivo(null);
+                    setError('');
+                  } else {
+                    setFacultadObjetivo(facultad);
+                    setError('');
+                  }
+                }}>
                 <div className="facultad-nombre">{facultad.nombre}</div>
                 <div className="facultad-tropas">
                   Tropas: {Object.values(facultad.tropas || {}).reduce((total, count) => total + count, 0)}
@@ -234,7 +306,11 @@ function PanelAtaques({
             ))}
           </div>
           {facultadesEnemigas.length === 0 && (
-            <p className="no-facultades">No hay facultades enemigas disponibles</p>
+            <p className="no-facultades">
+              {facultadOrigen
+                ? 'No hay facultades enemigas adyacentes disponibles para atacar.'
+                : 'No hay facultades enemigas disponibles.'}
+            </p>
           )}
         </div>
 

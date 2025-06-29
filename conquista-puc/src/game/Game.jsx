@@ -67,6 +67,36 @@ function Game() {
         }
         
         setPartidaData(resultado.data);
+
+        // Actualizar fase según el backend
+        const backendFase = resultado.data.partida?.fase_actual;
+        if (backendFase) {
+          if (backendFase === 'refuerzos') {
+            setFaseActual('refuerzos');
+            setFasesCompletadas({
+              refuerzos: false,
+              accion: false
+            });
+          } else {
+            // Solo cambiar a ataques si NO estás en movimientos
+            setFasesCompletadas({
+              refuerzos: true,
+              accion: false
+            });
+            if (faseActual === 'ataques') {
+              setFaseActual('ataques');
+            }
+            if (faseActual === 'movimientos') {
+              setFaseActual('movimientos');
+            }
+          }
+          const ataquesRealizadosBackend = resultado.data.partida?.ataques_realizados_turno || 0;
+          setAtaquesRealizados(ataquesRealizadosBackend);
+          const accionRealizadaBackend = resultado.data.partida?.accion_realizada || null;
+          setAccionRealizada(accionRealizadaBackend);
+
+        }
+
         
         if (resultado.data.partida.estado === ESTADOS_PARTIDA.EN_ESPERA) {
           navigate(`/partida/${id}`);
@@ -328,7 +358,7 @@ function Game() {
             {faseActual === 'refuerzos' && fasesCompletadas.refuerzos && (
               <div className="phase-panel completed">
                 <h3>Refuerzos Completados</h3>
-                <p>Ya completaste la fase de refuerzos en este turno.</p>
+                <p>Ya completaste la fase de refuerzos en este turno. Procede al panel de una acción o finaliza tu turno.</p>
               </div>
             )}
 
