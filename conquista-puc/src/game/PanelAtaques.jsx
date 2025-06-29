@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { jugadasService } from '../services/jugadasService';
 import './PanelAtaques.css';
+import { MATRIZ_ADYACENCIA  } from '../constants/gameConstants';
 
 function PanelAtaques({ 
   partidaId, 
@@ -41,40 +42,8 @@ function PanelAtaques({
     return labels[tipo] || tipo;
   };
 
-  const MATRIZ_ADYACENCIA = {
-    // Lo Contador
-    1: [4,5,7],
-    // Oriente
-    2: [14,21],
-    // San Joaquín
-    3: [6,10,13,15,16,17,19,20,23],
-    6: [3,10,13,15,19],
-    10: [3,6,13,15,20],
-    13: [3,6,10,15,20],
-    15: [3,6,10,13,20],
-    16: [17,23],
-    17: [16,23],
-    19: [3,6],
-    20: [3,10,13,15],
-    23: [16,17],
-    // Casa Central
-    4: [1,5,7,11,12,14,21,22],
-    5: [1,4,7,12],
-    7: [1,4,5,12],
-    11: [4,12,14,21],
-    12: [4,5,7,11,14,22],
-    14: [2,4,11,12,21],
-    21: [2,4,11,14],
-    22: [4,12],
-    // Villarrica
-    8: [9,18],
-    9: [8,18],
-    18: [8,9],
-  };
-
   const getFacultadesEnemigas = () => {
     if (!facultadOrigen) {
-      // No hay facultad origen: mostrar todas las enemigas
       return todasLasFacultades.filter(facultad => 
         facultad.controlada_por?.usuario_id !== jugadorId &&
         facultad.tropas &&
@@ -82,7 +51,6 @@ function PanelAtaques({
       );
     }
 
-    // Hay facultad origen: mostrar solo adyacentes
     const adyacentesIds = MATRIZ_ADYACENCIA[facultadOrigen.id] || [];
 
     return todasLasFacultades.filter(facultad => 

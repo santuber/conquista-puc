@@ -1,33 +1,7 @@
 import { useState, useEffect } from 'react';
 import { jugadasService } from '../services/jugadasService';
 import './PanelMovimientos.css';
-
-const MATRIZ_ADYACENCIA = {
-  1: [4,5,7],
-  2: [14,21],
-  3: [6,10,13,15,16,17,19,20,23],
-  6: [3,10,13,15,19],
-  10: [3,6,13,15,20],
-  13: [3,6,10,15,20],
-  15: [3,6,10,13,20],
-  16: [17,23],
-  17: [16,23],
-  19: [3,6],
-  20: [3,10,13,15],
-  23: [16,17],
-  4: [1,5,7,11,12,14,21,22],
-  5: [1,4,7,12],
-  7: [1,4,5,12],
-  11: [4,12,14,21],
-  12: [4,5,7,11,14,22],
-  14: [2,4,11,12,21],
-  21: [2,4,11,14],
-  22: [4,12],
-  8: [9,18],
-  9: [8,18],
-  18: [8,9],
-};
-
+import { MATRIZ_ADYACENCIA  } from '../constants/gameConstants';
 
 function PanelMovimientos({ 
   partidaId, 
@@ -111,7 +85,6 @@ function PanelMovimientos({
 
   const getFacultadesDestino = () => {
     if (!facultadOrigen) {
-      // Si no hay origen, mostramos todas las que controlas excepto ella misma (por si acaso)
       return facultadesControladas;
     }
 

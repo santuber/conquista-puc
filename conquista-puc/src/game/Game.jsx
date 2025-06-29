@@ -68,7 +68,6 @@ function Game() {
         
         setPartidaData(resultado.data);
 
-        // Actualizar fase según el backend
         const backendFase = resultado.data.partida?.fase_actual;
         if (backendFase) {
           if (backendFase === 'refuerzos') {
@@ -78,7 +77,6 @@ function Game() {
               accion: false
             });
           } else {
-            // Solo cambiar a ataques si NO estás en movimientos
             setFasesCompletadas({
               refuerzos: true,
               accion: false
